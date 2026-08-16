@@ -105,16 +105,6 @@
             display: flex;
             gap: 8px;
         }
-        .play-btn {
-            background: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid #333333;
-            padding: 8px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
         .vote-mini-btn {
             background: #ffffff;
             color: #000000;
@@ -192,48 +182,24 @@
         <div class="card" style="padding: 5px 0;">
             <div style="padding: 15px 15px 5px 15px;">
                 <h3>ГОЛОСОВАНИЕ ЗА ТРЕК ГОДА</h3>
-                <p style="margin-bottom: 15px;">Слушай треки прямо здесь и выбирай лучший бэнгер!</p>
+                <p style="margin-bottom: 15px;">Выбери один главный бэнгер, который больше всего заслужил этот титул.</p>
             </div>
 
             <div class="track-list">
-                <!-- ТРЕК 1 -->
                 <div class="track-item" id="track-limousine">
                     <div class="track-info">
                         <div class="track-title">Limousine Music</div>
                         <div class="track-author">Kai Angel</div>
                     </div>
-                    <div class="buttons-group">
-                        <audio id="audio-limousine" src="limousine.mp3"></audio>
-                        <button class="play-btn" onclick="togglePlay('limousine')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('limousine')">ГОЛОС</button>
-                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('limousine')">ГОЛОС</button>
                 </div>
                 
-                <!-- ТРЕК 2 -->
                 <div class="track-item" id="track-nofear">
                     <div class="track-info">
                         <div class="track-title">No Fear</div>
                         <div class="track-author">9mice</div>
                     </div>
-                    <div class="buttons-group">
-                        <audio id="audio-nofear" src="nofear.mp3"></audio>
-                        <button class="play-btn" onclick="togglePlay('nofear')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('nofear')">ГОЛОС</button>
-                    </div>
-                </div>
-
-                <!-- ТРЕК 3 -->
-                <div class="track-item" id="track-kreed">
-                    <div class="track-info">
-                        <div class="track-title">Имя Секрет / Дроп</div>
-                        <div class="track-author">9mice, madk1d, тёмный принц, ЕГОР КРИД</div>
-                    </div>
-                    <div class="buttons-group">
-                        <!-- Название длинное, поэтому подставляем точное совпадение -->
-                        <audio id="audio-kreed" src="jealous.mp3"></audio>
-                        <button class="play-btn" onclick="togglePlay('kreed')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('kreed')">ГОЛОС</button>
-                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('nofear')">ГОЛОС</button>
                 </div>
             </div>
         </div>
@@ -271,17 +237,20 @@
             }, 300);
         }
 
-        function togglePlay(trackId) {
-            const myAudio = document.getElementById(`audio-${trackId}`);
-            if (!myAudio) return;
-            const myBtn = myAudio.nextElementSibling;
+        function sendVote(trackId) {
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('.vote-mini-btn').innerText = 'ГОЛОС';
+            });
 
-            if (!myAudio.paused) {
-                myAudio.pause();
-                myBtn.innerText = '▶️';
-            } else {
-                document.querySelectorAll('audio').forEach(audio => {
-                    audio.pause();
-                    if (audio.nextElementSibling) audio.nextElementSibling.innerText = '▶️';
-                });
-                myAudio.play().catch(e => console.log("Ошибка воспроизведения:", e));
+            const currentItem = document.getElementById(`track-${trackId}`);
+            if (currentItem) {
+                currentItem.classList.add('selected');
+                currentItem.querySelector('.vote-mini-btn').innerText = 'ТВОЙ ВЫБОР';
+            }
+
+            tg.sendData(`VOTE:${trackId}`);
+        }
+    </script>
+</body>
+</html>
