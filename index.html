@@ -8,9 +8,10 @@
     <style>
         :root {
             --bg-color: #0d0d0d;
-            --card-bg: #1a1a1a;
+            --card-bg: #161616;
             --accent-color: #ffffff;
-            --text-muted: #888888;
+            --text-muted: #777777;
+            --border-color: #262626;
         }
         body {
             font-family: 'Courier New', Courier, monospace;
@@ -18,23 +19,26 @@
             color: #ffffff;
             margin: 0;
             padding: 0;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
             text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
         header {
             padding: 30px 10px;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid var(--border-color);
         }
         h1 {
-            font-size: 28px;
-            letter-spacing: 4px;
+            font-size: 26px;
+            letter-spacing: 5px;
             margin: 0;
             text-transform: uppercase;
         }
         .subtitle {
             color: var(--text-muted);
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 11px;
+            margin-top: 8px;
+            letter-spacing: 1px;
         }
         .container {
             padding: 20px;
@@ -45,52 +49,90 @@
         }
         .card {
             background: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             padding: 15px;
             margin-bottom: 15px;
             text-align: left;
         }
         .card h3 {
             margin: 0 0 10px 0;
-            font-size: 18px;
+            font-size: 16px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .card p {
             margin: 0;
-            color: #ccc;
-            font-size: 14px;
+            color: #b3b3b3;
+            font-size: 13px;
+            line-height: 1.5;
         }
-        .vote-btn {
-            background: #fff;
-            color: #000;
+        .track-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        .track-item:last-child {
+            border-bottom: none;
+        }
+        .track-item.selected {
+            background: #1a1a1a;
+            border-left: 2px solid #fff;
+        }
+        .track-info {
+            text-align: left;
+        }
+        .track-title {
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .track-author {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .vote-mini-btn {
+            background: #ffffff;
+            color: #000000;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 14px;
+            font-size: 11px;
+            font-family: inherit;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
             text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+        .track-item.selected .vote-mini-btn {
+            background: #333333;
+            color: #ffffff;
         }
         nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #000;
-            border-top: 1px solid #222;
+            background: #000000;
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
+            z-index: 100;
         }
         nav button {
             background: none;
             border: none;
             color: var(--text-muted);
             font-family: inherit;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         nav button.active {
             color: var(--accent-color);
@@ -105,49 +147,84 @@
         <div class="subtitle" id="user-greeting">COMMUNITY YEAR IN REVIEW</div>
     </header>
 
-    <!-- ВКЛАДКА: ГЛАВНАЯ -->
     <div id="home" class="container active">
         <div class="card">
             <h3>Итоги года</h3>
-            <p>Этот год стал легендарным для комьюнити Kai Angel & 9mice. Дропы, концерты, новые звуковые эпохи и разрыв чартов.</p>
+            <p>Этот год навсегда изменил вектор индустрии. Сольные эпохи артистов, громкие перформансы, новые звуковые эксперименты и тотальный контроль инфополя.</p>
         </div>
         <div class="card">
-            <h3>Статистика</h3>
-            <p>☠️ Релизов выпущено: 15+</p>
-            <p>🔥 Прослушиваний: Миллионы</p>
+            <h3>Комьюнити Статистика</h3>
+            <p>☠️ Релизов дропнуто: 15+</p>
+            <p>🔥 Сниппетов в сети: десятки</p>
+            <p>⚔️ Тренды TikTok & TG: захвачены</p>
         </div>
     </div>
 
-    <!-- ВКЛАДКА: РЕЛИЗЫ -->
     <div id="releases" class="container">
         <div class="card">
-            <h3>Главные альбомы и синглы</h3>
-            <p>Вспомни, под что ты флексил в этом году. Здесь собраны все ключевые треки, сменившие вектор индустрии.</p>
-        </div>
-        <div class="card">
-            <h3>⚡ Heavy Metal / Новая Эра</h3>
-            <p>Эксперименты со звуком, ставшие классикой.</p>
+            <h3>Ключевые звуковые релизы</h3>
+            <p>От жесткого индастриал-вайба до мрачной лирики. Здесь собраны альбомы и синглы, которые разрывали наши плейлисты на протяжении всего года.</p>
         </div>
     </div>
 
-    <!-- ВКЛАДКА: МЕМЫ -->
     <div id="memes" class="container">
         <div class="card">
             <h3>Главные инфоповоды</h3>
-            <p>От кружочков в Telegram до перформансов на концертах и культовых цитат, улетевших в TikTok.</p>
+            <p>Культовые кружочки из Telegram-каналов, громкие цитаты, ставшие локальными мемами, и образы, которые копировал весь интернет.</p>
         </div>
     </div>
 
-    <!-- ВКЛАДКА: ГОЛОСОВАНИЕ -->
     <div id="vote" class="container">
-        <div class="card">
-            <h3>Выбери трек года</h3>
-            <p>Проголосуй за трек, который стоял на репите чаще всего.</p>
-            <button class="vote-btn" onclick="sendVote('Track 1')">Проголосовать</button>
+        <div class="card" style="padding: 5px 0;">
+            <div style="padding: 15px 15px 5px 15px;">
+                <h3>ГОЛОСОВАНИЕ ЗА ТРЕК ГОДА</h3>
+                <p style="margin-bottom: 15px;">Выбери один главный бэнгер, который больше всего заслужил этот титул. Ты можешь изменить свой выбор в любой момент!</p>
+            </div>
+
+            <div class="track-list">
+                <div class="track-item" id="track-LIPSTICK">
+                    <div class="track-info">
+                        <div class="track-title">LIPSTICK</div>
+                        <div class="track-author">Kai Angel & 9mice</div>
+                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('LIPSTICK')">ГОЛОС</button>
+                </div>
+                
+                <div class="track-item" id="track-Ice">
+                    <div class="track-info">
+                        <div class="track-title">Ice + Alabaster</div>
+                        <div class="track-author">9mice & Kai Angel</div>
+                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('Ice')">ГОЛОС</button>
+                </div>
+
+                <div class="track-item" id="track-Surgery">
+                    <div class="track-info">
+                        <div class="track-title">Ринопластика (Surgery)</div>
+                        <div class="track-author">9mice & Kai Angel</div>
+                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('Surgery')">ГОЛОС</button>
+                </div>
+
+                <div class="track-item" id="track-Phoenix">
+                    <div class="track-info">
+                        <div class="track-title">Phoenix</div>
+                        <div class="track-author">9mice & Kai Angel</div>
+                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('Phoenix')">ГОЛОС</button>
+                </div>
+
+                <div class="track-item" id="track-2017">
+                    <div class="track-info">
+                        <div class="track-title">2017</div>
+                        <div class="track-author">9mice & Kai Angel</div>
+                    </div>
+                    <button class="vote-mini-btn" onclick="sendVote('2017')">ГОЛОС</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
     <nav>
         <button onclick="switchTab('home', this)" class="active">Главная</button>
         <button onclick="switchTab('releases', this)">Релизы</button>
@@ -158,14 +235,14 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand(); // Открываем приложение на весь экран
+        tg.expand();
 
-        // Приветствие по имени из Telegram
+        let currentVote = null;
+
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('user-greeting').innerText = `ПРИВЕТ, ${tg.initDataUnsafe.user.first_name.toUpperCase()}! ТЫ В ИГРЕ.`;
         }
 
-        // Переключение вкладок
         function switchTab(tabId, btn) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -174,10 +251,18 @@
             btn.classList.add('active');
         }
 
-        // Отправка голоса обратно боту
-        function sendVote(trackName) {
-            tg.sendData(`VOTE:${trackName}`);
-            tg.close(); // Закрываем мини-апп после отправки данных
+        function sendVote(trackId) {
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('.vote-mini-btn').innerText = 'ГОЛОС';
+            });
+
+            const currentItem = document.getElementById(`track-${trackId}`);
+            currentItem.classList.add('selected');
+            currentItem.querySelector('.vote-mini-btn').innerText = 'ТВОЙ ВЫБОР';
+
+            currentVote = trackId;
+            tg.sendData(`VOTE:${trackId}`);
         }
     </script>
 </body>
