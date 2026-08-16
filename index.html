@@ -188,7 +188,6 @@
         </div>
     </div>
 
-    <!-- ГОЛОСОВАНИЕ С ВАШИМИ ТРЕКАМИ -->
     <div id="vote" class="container">
         <div class="card" style="padding: 5px 0;">
             <div style="padding: 15px 15px 5px 15px;">
@@ -204,7 +203,7 @@
                         <div class="track-author">Kai Angel</div>
                     </div>
                     <div class="buttons-group">
-                        <audio id="audio-limousine" src="limousine.mp3"></audio>
+                        <audio id="audio-limousine" src="Kai Angel - Limousine Music.mp3"></audio>
                         <button class="play-btn" onclick="togglePlay('limousine')">▶️</button>
                         <button class="vote-mini-btn" onclick="sendVote('limousine')">ГОЛОС</button>
                     </div>
@@ -217,7 +216,7 @@
                         <div class="track-author">9mice</div>
                     </div>
                     <div class="buttons-group">
-                        <audio id="audio-nofear" src="nofear.mp3"></audio>
+                        <audio id="audio-nofear" src="9mice - No Fear.mp3"></audio>
                         <button class="play-btn" onclick="togglePlay('nofear')">▶️</button>
                         <button class="vote-mini-btn" onclick="sendVote('nofear')">ГОЛОС</button>
                     </div>
@@ -230,7 +229,8 @@
                         <div class="track-author">9mice, madk1d, тёмный принц, ЕГОР КРИД</div>
                     </div>
                     <div class="buttons-group">
-                        <audio id="audio-kreed" src="kreed.mp3"></audio>
+                        <!-- Название длинное, поэтому подставляем точное совпадение -->
+                        <audio id="audio-kreed" src="9mice, ЕГОР КРИД, темный принц, madk1d - Без названия.mp3"></audio>
                         <button class="play-btn" onclick="togglePlay('kreed')">▶️</button>
                         <button class="vote-mini-btn" onclick="sendVote('kreed')">ГОЛОС</button>
                     </div>
@@ -273,6 +273,7 @@
 
         function togglePlay(trackId) {
             const myAudio = document.getElementById(`audio-${trackId}`);
+            if (!myAudio) return;
             const myBtn = myAudio.nextElementSibling;
 
             if (!myAudio.paused) {
@@ -281,13 +282,6 @@
             } else {
                 document.querySelectorAll('audio').forEach(audio => {
                     audio.pause();
-                    audio.nextElementSibling.innerText = '▶️';
+                    if (audio.nextElementSibling) audio.nextElementSibling.innerText = '▶️';
                 });
-                myAudio.play();
-                myBtn.innerText = '⏸️';
-            }
-        }
-
-        function sendVote(trackId) {
-            document.querySelectorAll('.track-item').forEach(item => {
-                item.classList.remove('selected');
+                myAudio.play().catch(e => console.log("Ошибка воспроизведения:", e));
