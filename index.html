@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIPERR COMMUNITY RECAP</title>
+    <title>VIPERR RECAP</title>
+    <!-- Правильное подключение скрипта Telegram -->
     <script src="https://telegram.org"></script>
     <style>
         :root {
-            --bg-color: #0d0d0d;
-            --card-bg: #161616;
+            --bg-color: #000000;
+            --card-bg: #111111;
             --accent-color: #ffffff;
-            --text-muted: #777777;
-            --border-color: #262626;
+            --text-muted: #666666;
+            --border-color: #222222;
         }
         body {
             font-family: 'Courier New', Courier, monospace;
@@ -21,15 +22,15 @@
             padding: 0;
             padding-bottom: 90px;
             text-align: center;
-            -webkit-user-select: none;
             user-select: none;
+            -webkit-user-select: none;
         }
         header {
-            padding: 30px 10px;
+            padding: 25px 10px;
             border-bottom: 1px solid var(--border-color);
         }
         h1 {
-            font-size: 26px;
+            font-size: 24px;
             letter-spacing: 5px;
             margin: 0;
             text-transform: uppercase;
@@ -37,7 +38,7 @@
         .subtitle {
             color: var(--text-muted);
             font-size: 11px;
-            margin-top: 8px;
+            margin-top: 5px;
             letter-spacing: 1px;
         }
         .container {
@@ -57,13 +58,13 @@
         }
         .card h3 {
             margin: 0 0 10px 0;
-            font-size: 16px;
+            font-size: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .card p {
             margin: 0;
-            color: #b3b3b3;
+            color: #aaaaaa;
             font-size: 13px;
             line-height: 1.5;
         }
@@ -79,8 +80,8 @@
             border-bottom: none;
         }
         .track-item.selected {
-            background: #1a1a1a;
-            border-left: 2px solid #fff;
+            background: #161616;
+            border-left: 2px solid #ffffff;
         }
         .track-info {
             text-align: left;
@@ -132,7 +133,6 @@
             font-size: 11px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
         nav button.active {
             color: var(--accent-color);
@@ -147,38 +147,41 @@
         <div class="subtitle" id="user-greeting">COMMUNITY YEAR IN REVIEW</div>
     </header>
 
+    <!-- ГЛАВНАЯ -->
     <div id="home" class="container active">
         <div class="card">
             <h3>Итоги года</h3>
-            <p>Этот год навсегда изменил вектор индустрии. Сольные эпохи артистов, громкие перформансы, новые звуковые эксперименты и тотальный контроль инфополя.</p>
+            <p>Этот год навсегда изменил вектор индустрии. Новые звуковые эксперименты Viperr и тотальный контроль инфополя.</p>
         </div>
         <div class="card">
-            <h3>Комьюнити Статистика</h3>
+            <h3>Статистика</h3>
             <p>☠️ Релизов дропнуто: 15+</p>
             <p>🔥 Сниппетов в сети: десятки</p>
-            <p>⚔️ Тренды TikTok & TG: захвачены</p>
         </div>
     </div>
 
+    <!-- РЕЛИЗЫ -->
     <div id="releases" class="container">
         <div class="card">
-            <h3>Ключевые звуковые релизы</h3>
-            <p>От жесткого индастриал-вайба до мрачной лирики. Здесь собраны альбомы и синглы, которые разрывали наши плейлисты на протяжении всего года.</p>
+            <h3>Ключевые релизы</h3>
+            <p>Здесь будут собраны альбомы и синглы, которые разрывали плейлисты весь год.</p>
         </div>
     </div>
 
+    <!-- МЕМЫ -->
     <div id="memes" class="container">
         <div class="card">
             <h3>Главные инфоповоды</h3>
-            <p>Культовые кружочки из Telegram-каналов, громкие цитаты, ставшие локальными мемами, и образы, которые копировал весь интернет.</p>
+            <p>Культовые кружочки из Telegram-каналов и образы, которые копировал весь интернет.</p>
         </div>
     </div>
 
+    <!-- ГОЛОСОВАНИЕ -->
     <div id="vote" class="container">
         <div class="card" style="padding: 5px 0;">
             <div style="padding: 15px 15px 5px 15px;">
                 <h3>ГОЛОСОВАНИЕ ЗА ТРЕК ГОДА</h3>
-                <p style="margin-bottom: 15px;">Выбери один главный бэнгер, который больше всего заслужил этот титул. Ты можешь изменить свой выбор в любой момент!</p>
+                <p style="margin-bottom: 15px;">Выбери главный бэнгер. Выбор можно изменить в любой момент!</p>
             </div>
 
             <div class="track-list">
@@ -205,26 +208,11 @@
                     </div>
                     <button class="vote-mini-btn" onclick="sendVote('Surgery')">ГОЛОС</button>
                 </div>
-
-                <div class="track-item" id="track-Phoenix">
-                    <div class="track-info">
-                        <div class="track-title">Phoenix</div>
-                        <div class="track-author">9mice & Kai Angel</div>
-                    </div>
-                    <button class="vote-mini-btn" onclick="sendVote('Phoenix')">ГОЛОС</button>
-                </div>
-
-                <div class="track-item" id="track-2017">
-                    <div class="track-info">
-                        <div class="track-title">2017</div>
-                        <div class="track-author">9mice & Kai Angel</div>
-                    </div>
-                    <button class="vote-mini-btn" onclick="sendVote('2017')">ГОЛОС</button>
-                </div>
             </div>
         </div>
     </div>
 
+    <!-- НАВИГАЦИЯ -->
     <nav>
         <button onclick="switchTab('home', this)" class="active">Главная</button>
         <button onclick="switchTab('releases', this)">Релизы</button>
@@ -236,8 +224,6 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-
-        let currentVote = null;
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('user-greeting').innerText = `ПРИВЕТ, ${tg.initDataUnsafe.user.first_name.toUpperCase()}! ТЫ В ИГРЕ.`;
@@ -261,7 +247,7 @@
             currentItem.classList.add('selected');
             currentItem.querySelector('.vote-mini-btn').innerText = 'ТВОЙ ВЫБОР';
 
-            currentVote = trackId;
+            // Отправка данных боту без закрытия окна
             tg.sendData(`VOTE:${trackId}`);
         }
     </script>
