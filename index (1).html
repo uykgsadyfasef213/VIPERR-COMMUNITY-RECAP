@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIPERR RECAP</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(18, 18, 18, 0.7);
+            --accent-color: #ffffff;
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 100px;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            padding: 30px 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 26px;
+            letter-spacing: 6px;
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .subtitle {
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .tab-container {
+            position: relative;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .tab-content {
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        /* Показываем только активную вкладку без сложных CSS-анимаций для максимальной стабильности */
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin: 16px auto;
+            max-width: 400px;
+            border-radius: 6px;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h2 {
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin-top: 0;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #aaaaaa;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .track-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .track-item:last-child {
+            border-bottom: none;
+        }
+
+        .track-info {
+            text-align: left;
+        }
+
+        .track-title {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .track-author {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .play-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 3px;
+        }
+
+        .vote-option {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-align: left;
+        }
+
+        .nav-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #050505;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+            padding: 6px 12px;
+        }
+
+        .nav-btn.active {
+            color: var(--accent-color);
+            font-weight: bold;
+            border-bottom: 2px solid var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <header>
+        <h1>♱ VIPERR RECAP ♱</h1>
+        <div class="subtitle">Community Year in Review</div>
+    </header>
+
+    <div class="tab-container">
+        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
+        <div id="main-tab" class="tab-content active">
+            <div class="card">
+                <h2>ИТОГИ ГОДА</h2>
+                <p>Этот год навсегда изменил вектор индустрии. Новые звуковые эксперименты Viperr и тотальный контроль инфополя.</p>
+            </div>
+            <div class="card">
+                <h2>СОЛЬНАЯ ЭРА</h2>
+                <p>Kai Angel и 9mice двигаются по собственным траекториям, разрывая чарты и готовя масштабные шоу в МТС Live Холле.</p>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 2: МУЗЫКА -->
+        <div id="music-tab" class="tab-content">
+            <div class="card">
+                <h2>ГЛАВНЫЕ ТРЕКИ</h2>
+                <p>Релизы, которые разрывали площадки и наушники фанатов в этом году.</p>
+                <div style="margin-top: 25px;">
+                    <div class="track-item">
+                        <div class="track-info">
+                            <div class="track-title">No Fear</div>
+                            <div class="track-author">9mice</div>
+                        </div>
+                        <button class="play-btn" onclick="showTrackInfo('9mice — No Fear')">Инфо</button>
+                    </div>
+                    <div class="track-item">
+                        <div class="track-info">
+                            <div class="track-title">Limousine Music</div>
+                            <div class="track-author">Kai Angel</div>
+                        </div>
+                        <button class="play-btn" onclick="showTrackInfo('Kai Angel — Limousine Music')">Инфо</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 3: ГОЛОСОВАНИЕ -->
+        <div id="vote-tab" class="tab-content">
+            <div class="card">
+                <h2>ТВОЙ ВЫБОР</h2>
+                <p>Проголосуй за главный хит уходящего года. Мнение комьюнити решит всё.</p>
+                <div style="margin-top: 20px;">
+                    <div class="vote-option" onclick="sendVote('9mice — No Fear')">♱ 9mice — No Fear</div>
+                    <div class="vote-option" onclick="sendVote('Kai Angel — Limousine Music')">♱ Kai Angel — Limousine Music</div>
+                    <div class="vote-option" onclick="sendVote('Егор КРИД feat. 9mice — тёмный при...')">♱ Егор КРИД feat. 9mice — тёмный при...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-menu">
+        <button id="btn-main-tab" class="nav-btn active" onclick="switchTab('main-tab')">Главная</button>
+        <button id="btn-music-tab" class="nav-btn" onclick="switchTab('music-tab')">Музыка</button>
+        <button id="btn-vote-tab" class="nav-btn" onclick="switchTab('vote-tab')">Голосование</button>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        if (tg) {
+            tg.expand();
+        }
+
+        // Самая надежная и простая функция переключения без задержек и CSS-анимаций
+        function switchTab(tabId) {
+            // 1. Находим абсолютно все вкладки и прячем их через удаление класса active
+            const tabs = document.querySelectorAll('.tab-content');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+
+            // 2. Находим абсолютно все кнопки меню и убираем у них подсветку
+            const buttons = document.querySelectorAll('.nav-btn');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+
+            // 3. Показываем нужную вкладку
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+
+            // 4. Подсвечиваем нажатую кнопку
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+            
+            // Вибрация
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function showTrackInfo(trackName) {
+            if (tg) {
+                tg.showAlert("Выбран трек: " + trackName);
+            } else {
+                alert("Выбран трек: " + trackName);
+            }
+        }
+
+        function sendVote(choice) {
+            if (tg) {
+                tg.showConfirm("Отдать голос за " + choice + "?", function(isConfirmed) {
+                    if (isConfirmed) {
+                        tg.showAlert("Твой голос засчитан! ♱");
+                    }
+                });
+            } else {
+                if (confirm("Отдать голос за " + choice + "?")) {
+                    alert("Твой голос засчитан! ♱");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
