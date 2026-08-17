@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIPERR RECAP</title>
-    <script src="https://telegram.org"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: #000000;
             --card-bg: #111111;
             --accent-color: #ffffff;
-            --text-muted: #666666;
+            --text-muted: #888888;
             --border-color: #222222;
         }
+
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-color);
@@ -24,280 +25,294 @@
             user-select: none;
             -webkit-user-select: none;
         }
+
         header {
             padding: 25px 10px;
             border-bottom: 1px solid var(--border-color);
         }
+
         h1 {
             font-size: 24px;
             letter-spacing: 5px;
             margin: 0;
             text-transform: uppercase;
         }
+
         .subtitle {
+            font-size: 10px;
             color: var(--text-muted);
-            font-size: 11px;
+            letter-spacing: 2px;
             margin-top: 5px;
-            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        .container {
+
+        /* Контейнер для содержимого вкладок */
+        .tab-content {
             padding: 20px;
-            display: none;
-            opacity: 0;
-            transform: translateY(5px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            display: none; /* По умолчанию все скрыты */
+            animation: fadeIn 0.3s ease-in-out;
         }
-        .container.active {
+
+        /* Показываем только активную вкладку */
+        .tab-content.active {
             display: block;
         }
-        .container.show {
-            opacity: 1;
-            transform: translateY(0);
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Стили карточек */
         .card {
-            background: var(--card-bg);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
+            padding: 20px;
+            margin: 15px auto;
+            max-width: 400px;
             border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
             text-align: left;
         }
-        .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 15px;
+
+        .card h2 {
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin-top: 0;
+            color: var(--accent-color);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
         }
+
         .card p {
-            margin: 0 0 10px 0;
-            color: #aaaaaa;
             font-size: 13px;
-            line-height: 1.5;
+            color: #cccccc;
+            line-height: 1.6;
         }
+
+        /* Стили музыкального плеера */
         .track-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 10px;
+            padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
-            transition: background 0.3s ease;
         }
-        .track-item.selected {
-            background: #121212;
-            border-left: 3px solid #ffffff;
+
+        .track-item:last-child {
+            border-bottom: none;
         }
+
         .track-info {
             text-align: left;
-            flex-grow: 1;
-            margin-right: 10px;
         }
+
         .track-title {
+            font-size: 14px;
             font-weight: bold;
-            font-size: 13px;
-            text-transform: uppercase;
         }
+
         .track-author {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-muted);
             margin-top: 2px;
         }
-        .buttons-group {
-            display: flex;
-            gap: 8px;
-        }
+
         .play-btn {
-            background: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid #333333;
-            padding: 8px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-        .vote-mini-btn {
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            padding: 8px 14px;
-            font-size: 11px;
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 6px 14px;
             font-family: inherit;
-            font-weight: bold;
+            font-size: 11px;
             cursor: pointer;
             text-transform: uppercase;
-            border-radius: 2px;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
-        .track-item.selected .vote-mini-btn {
-            background: #252525;
-            color: #888888;
+
+        .play-btn.playing {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
         }
-        nav {
+
+        /* Нижнее навигационное меню */
+        .nav-menu {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #000000;
+            background-color: var(--bg-color);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
             z-index: 100;
         }
-        nav button {
+
+        .nav-btn {
             background: none;
             border: none;
             color: var(--text-muted);
-            font-family: inherit;
-            font-size: 11px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: color 0.3s ease;
+            padding: 5px 10px;
+            transition: color 0.2s;
         }
-        nav button.active {
+
+        .nav-btn.active {
             color: var(--accent-color);
             font-weight: bold;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        /* Элементы голосования */
+        .vote-option {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .vote-option:hover {
+            border-color: var(--accent-color);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>VIPERR RECAP</h1>
-        <div class="subtitle" id="user-greeting">COMMUNITY YEAR IN REVIEW</div>
+        <h1>♱ VIPERR RECAP ♱</h1>
+        <div class="subtitle">Community Year in Review</div>
     </header>
 
-    <div id="home" class="container active show">
+    <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
+    <div id="main-tab" class="tab-content active">
         <div class="card">
-            <h3>Итоги года</h3>
+            <h2>ИТОГИ ГОДА</h2>
             <p>Этот год навсегда изменил вектор индустрии. Новые звуковые эксперименты Viperr и тотальный контроль инфополя.</p>
         </div>
-    </div>
-
-    <div id="releases" class="container">
         <div class="card">
-            <h3>Ключевые релизы</h3>
-            <p>Здесь будут собраны альбомы и синглы, которые разрывали плейлисты весь год.</p>
+            <h2>СОЛЬНАЯ ЭРА</h2>
+            <p>Kai Angel и 9mice двигаются по собственным траекториям, разрывая чарты и готовя масштабные шоу в МТС Live Холле.</p>
         </div>
     </div>
 
-    <div id="memes" class="container">
+    <!-- ВКЛАДКА 2: МУЗЫКА -->
+    <div id="music-tab" class="tab-content">
         <div class="card">
-            <h3>Главные инфоповоды</h3>
-            <p>Культовые кружочки из Telegram-каналов и образы, которые копировал весь интернет.</p>
-        </div>
-    </div>
-
-    <!-- ГОЛОСОВАНИЕ С РАБОЧИМ БЕЗОПАСНЫМ ПЛЕЕРОМ -->
-    <div id="vote" class="container">
-        <div class="card" style="padding: 5px 0;">
-            <div style="padding: 15px 15px 5px 15px;">
-                <h3>ГОЛОСОВАНИЕ ЗА ТРЕК ГОДА</h3>
-                <p style="margin-bottom: 15px;">Слушай треки прямо здесь и выбирай лучший бэнгер!</p>
-            </div>
-
-            <div class="track-list">
-                <!-- ТРЕК 1 -->
-                <div class="track-item" id="track-limousine">
+            <h2>ГЛАВНЫЕ ТРЕКИ</h2>
+            <p>Слушай релизы, которые разрывали площадки и наушники фанатов в этом году.</p>
+            
+            <div style="margin-top: 20px;">
+                <!-- Трек 1 -->
+                <div class="track-item">
                     <div class="track-info">
-                        <div class="track-title">Limousine</div>
-                        <div class="track-author">Kai Angel</div>
-                    </div>
-                    <div class="buttons-group">
-                        <audio id="audio-limousine" src="https://soundhelix.com"></audio>
-                        <button class="play-btn" onclick="togglePlay('limousine')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('limousine')">ГОЛОС</button>
-                    </div>
-                </div>
-                
-                <!-- ТРЕК 2 -->
-                <div class="track-item" id="track-nofear">
-                    <div class="track-info">
-                        <div class="track-title">NoFear</div>
+                        <div class="track-title">No Fear</div>
                         <div class="track-author">9mice</div>
                     </div>
-                    <div class="buttons-group">
-                        <audio id="audio-nofear" src="https://soundhelix.com"></audio>
-                        <button class="play-btn" onclick="togglePlay('nofear')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('nofear')">ГОЛОС</button>
-                    </div>
+                    <button class="play-btn" onclick="togglePlay('9mice - No Fear.mp3', this)">Play</button>
                 </div>
 
-                <!-- ТРЕК 3 -->
-                <div class="track-item" id="track-kreed">
+                <!-- Трек 2 -->
+                <div class="track-item">
                     <div class="track-info">
-                        <div class="track-title">kreed</div>
-                        <div class="track-author">9mice, madk1d, тёмный принц, ЕГОР КРИД</div>
+                        <div class="track-title">Limousine Music</div>
+                        <div class="track-author">Kai Angel</div>
                     </div>
-                    <div class="buttons-group">
-                        <audio id="audio-kreed" src="https://soundhelix.com"></audio>
-                        <button class="play-btn" onclick="togglePlay('kreed')">▶️</button>
-                        <button class="vote-mini-btn" onclick="sendVote('kreed')">ГОЛОС</button>
-                    </div>
+                    <button class="play-btn" onclick="togglePlay('Kai Angel - Limousine Music.mp3', this)">Play</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <nav>
-        <button onclick="switchTab('home', this)" class="active">Главная</button>
-        <button onclick="switchTab('releases', this)">Релизы</button>
-        <button onclick="switchTab('memes', this)">Мемы</button>
-        <button onclick="switchTab('vote', this)">Голосовать</button>
-    </nav>
+    <!-- ВКЛАДКА 3: ГОЛОСОВАНИЕ -->
+    <div id="vote-tab" class="tab-content">
+        <div class="card">
+            <h2>ТВОЙ ВЫБОР</h2>
+            <p>Проголосуй за главный хит уходящего года. Мнение комьюнити решит всё.</p>
+            
+            <div class="vote-option" onclick="alert('Голос учтен за No Fear!')">9mice — No Fear</div>
+            <div class="vote-option" onclick="alert('Голос учтен за Limousine Music!')">Kai Angel — Limousine Music</div>
+            <div class="vote-option" onclick="alert('Голос учтен за Егор КРИД, тёмный при...!')">Егор КРИД, тёмный при... (feat. 9mice)</div>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ НАВИГАЦИИ -->
+    <div class="nav-menu">
+        <button id="btn-main-tab" class="nav-btn active" onclick="switchTab('main-tab')">Главная</button>
+        <button id="btn-music-tab" class="nav-btn" onclick="switchTab('music-tab')">Музыка</button>
+        <button id="btn-vote-tab" class="nav-btn" onclick="switchTab('vote-tab')">Голосование</button>
+    </div>
 
     <script>
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        tg.expand(); // Расширяем на весь экран
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-greeting').innerText = `ПРИВЕТ, ${tg.initDataUnsafe.user.first_name.toUpperCase()}! ТЫ В ИГРЕ.`;
+        // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК ---
+        function switchTab(tabId) {
+            // Скрываем все вкладки
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Убираем активный класс у всех кнопок
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Показываем нужную вкладку и активируем её кнопку
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
         }
 
-        function switchTab(tabId, btn) {
-            const currentActive = document.querySelector('.container.active');
-            const nextActive = document.getElementById(tabId);
-            if (currentActive === nextActive) return;
+        // --- ЛОГИКА МУЗЫКАЛЬНОГО ПЛЕЕРА ---
+        let currentAudio = null;
+        let currentButton = null;
 
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentActive.classList.remove('show');
-            
-            setTimeout(() => {
-                currentActive.classList.remove('active');
-                nextActive.classList.add('active');
-                setTimeout(() => { nextActive.classList.add('show'); }, 50);
-            }, 300);
+        function togglePlay(fileName, buttonElement) {
+            // Если этот же трек уже играет — ставим на паузу
+            if (currentAudio && currentButton === buttonElement) {
+                if (!currentAudio.paused) {
+                    currentAudio.pause();
+                    buttonElement.textContent = "Play";
+                    buttonElement.classList.remove('playing');
+                } else {
+                    currentAudio.play().catch(e => console.log(e));
+                    buttonElement.textContent = "Pause";
+                    buttonElement.classList.add('playing');
+                }
+                return;
+            }
+
+            // Если играет другой трек — останавливаем его
+            if (currentAudio) {
+                currentAudio.pause();
+                if (currentButton) {
+                    currentButton.textContent = "Play";
+                    currentButton.classList.remove('playing');
+                }
+            }
+
+            // Создаем и запускаем новый трек
+            // Путь берется прямо из корня твоего сайта на GitHub Pages
+            currentAudio = new Audio(fileName);
+            currentButton = buttonElement;
+
+            currentAudio.play()
+                .then(() => {
+                    buttonElement.textContent = "Pause";buttonElement.classList.add('playing');
+                })
+                 .catch(error => {alert("Нажми еще раз, чтобы активировать плеер!");console.error("Ошибка аудио:", error);
+                                 }):
+
+            // Когда трек доиграет до конца
+            currentAudio.onended = function() {buttonElement.textContent = "Play";buttonElement.classList.remove('playing');
+                                               currentAudio = null;
+                                               currentButton = null;
+                                              };
         }
-
-        function togglePlay(trackId) {
-            const myAudio = document.getElementById(`audio-${trackId}`);
-            if (!myAudio) return;
-            const myBtn = myAudio.nextElementSibling;
-
-            if (!myAudio.paused) {
-                myAudio.pause();
-                myBtn.innerText = '▶️';
-            } else {
-                document.querySelectorAll('audio').forEach(audio => {
-                    audio.pause();
-                    if (audio.nextElementSibling) audio.nextElementSibling.innerText = '▶️';
-                });
-myAudio.play().catch(e => console.log("Ошибка воспроизведения:", e));
-                myBtn.innerText = '⏸️';
-                }
-            }
-        function sendVote(trackId) {
-            document.querySelectorAll('.track-item').forEach(item => {
-                item.classList.remove('selected');
-                item.querySelector('.vote-mini-btn').innerText = 'ГОЛОС';
-                });
-            const currentItem = document.getElementById(track-${trackId});
-            if (currentItem) {
-                currentItem.classList.add('selected');
-                currentItem.querySelector('.vote-mini-btn').innerText = 'ТВОЙ ВЫБОР';
-                }
-
-        tg.sendData(VOTE:${trackId});
-            }
