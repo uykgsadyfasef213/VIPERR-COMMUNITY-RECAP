@@ -1,720 +1,820 @@
-import asyncio
-import logging
-import os
-import sqlite3
-from datetime import datetime
-from pathlib import Path
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-from aiogram import Bot, Dispatcher, F
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
-from aiogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
-from dotenv import load_dotenv
+    <title>VIPERR 2026</title>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-# =========================================================
-# НАСТРОЙКИ
-# =========================================================
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap');
 
-load_dotenv()
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-GROUP_ID = os.getenv("GROUP_ID")
+        :root {
+            --bg: #070707;
+            --bg2: #101010;
+            --card: #111111;
+            --card2: #161616;
+            --red: #ff1738;
+            --red-dark: #9d071c;
+            --white: #f4f4f4;
+            --gray: #858585;
+            --line: rgba(255,255,255,0.08);
+        }
 
-if not BOT_TOKEN:
-    raise ValueError(
-        "❌ Не найден BOT_TOKEN. "
-        "Добавь его в переменные окружения."
-    )
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(255, 0, 45, 0.18), transparent 35%),
+                linear-gradient(180deg, #090909 0%, #050505 100%);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-if not GROUP_ID:
-    raise ValueError(
-        "❌ Не найден GROUP_ID. "
-        "Добавь ID Telegram-группы."
-    )
+        body:before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.055;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,.3) 0px,
+                    rgba(255,255,255,.3) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+            z-index: 100;
+        }
 
-GROUP_ID = int(GROUP_ID)
+        .app {
+            max-width: 520px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: 95px;
+        }
 
-DB_PATH = Path("viperr.db")
+        /* HEADER */
 
+        header {
+            padding: 28px 20px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-# =========================================================
-# ЛОГИ
-# =========================================================
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 27px;
+            letter-spacing: -1px;
+        }
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
+        .logo span {
+            color: var(--red);
+        }
 
-logger = logging.getLogger(__name__)
+        .year {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--gray);
+            border: 1px solid var(--line);
+            padding: 7px 10px;
+            border-radius: 3px;
+        }
 
+        /* PAGES */
 
-# =========================================================
-# TELEGRAM BOT
-# =========================================================
+        .page {
+            display: none;
+            padding: 0 18px;
+            animation: pageIn .25s ease;
+        }
 
-bot = Bot(
-    token=BOT_TOKEN,
-    default=DefaultBotProperties(
-        parse_mode=ParseMode.HTML
-    ),
-)
+        .page.active {
+            display: block;
+        }
 
-dp = Dispatcher()
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(7px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
+        /* HOME */
 
-# =========================================================
-# DATABASE
-# =========================================================
+        .hero {
+            min-height: 330px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background:
+                linear-gradient(180deg, transparent 10%, rgba(0,0,0,.9) 100%),
+                radial-gradient(circle at 70% 25%, rgba(255, 15, 50, .42), transparent 25%),
+                linear-gradient(135deg, #191919, #050505 65%);
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: flex-end;
+            padding: 24px;
+        }
 
-def get_connection():
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row
-    return connection
+        .hero:after {
+            content: "VIPERR";
+            position: absolute;
+            top: 38px;
+            right: -22px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 78px;
+            font-weight: 700;
+            color: rgba(255,255,255,.035);
+            transform: rotate(-90deg);
+        }
 
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
 
-def init_database():
-    connection = get_connection()
+        .eyebrow {
+            color: var(--red);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 9px;
+        }
 
-    connection.execute(
-        """
-        CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY,
-            username TEXT,
-            full_name TEXT,
-            messages INTEGER DEFAULT 0,
-            first_seen TEXT,
-            last_seen TEXT
-        )
-        """
-    )
+        h1 {
+            margin: 0;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 45px;
+            line-height: .94;
+            letter-spacing: -1px;
+        }
 
-    connection.execute(
-        """
-        CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            created_at TEXT NOT NULL
-        )
-        """
-    )
+        h1 span {
+            color: var(--red);
+        }
 
-    connection.commit()
-    connection.close()
+        .hero-description {
+            margin: 16px 0 0;
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.5;
+            max-width: 310px;
+        }
 
-    logger.info("Database initialized")
+        .section-title {
+            margin: 28px 2px 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
+        .section-title h2 {
+            margin: 0;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 23px;
+        }
 
-def save_message(
-    user_id: int,
-    username: str | None,
-    full_name: str,
-):
-    now = datetime.utcnow().isoformat()
+        .section-title span {
+            font-size: 10px;
+            color: var(--gray);
+            letter-spacing: 1.5px;
+        }
 
-    connection = get_connection()
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
-    existing_user = connection.execute(
-        """
-        SELECT user_id
-        FROM users
-        WHERE user_id = ?
-        """,
-        (user_id,),
-    ).fetchone()
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 19px;
+        }
 
-    if existing_user:
-        connection.execute(
-            """
-            UPDATE users
-            SET
-                username = ?,
-                full_name = ?,
-                messages = messages + 1,
-                last_seen = ?
-            WHERE user_id = ?
-            """,
-            (
-                username,
-                full_name,
-                now,
-                user_id,
-            ),
-        )
+        .stat-number {
+            font-family: 'Oswald', sans-serif;
+            font-size: 31px;
+            color: var(--white);
+        }
 
-    else:
-        connection.execute(
-            """
-            INSERT INTO users (
-                user_id,
-                username,
-                full_name,
-                messages,
-                first_seen,
-                last_seen
-            )
-            VALUES (?, ?, ?, 1, ?, ?)
-            """,
-            (
-                user_id,
-                username,
-                full_name,
-                now,
-                now,
-            ),
-        )
+        .stat-label {
+            margin-top: 4px;
+            color: var(--gray);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    connection.execute(
-        """
-        INSERT INTO messages (
-            user_id,
-            created_at
-        )
-        VALUES (?, ?)
-        """,
-        (
-            user_id,
-            now,
-        ),
-    )
+        .quote {
+            margin-top: 10px;
+            background: #0e0e0e;
+            border-left: 3px solid var(--red);
+            padding: 18px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
 
-    connection.commit()
-    connection.close()
+        /* MEMES */
 
+        .meme {
+            margin-bottom: 14px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            overflow: hidden;
+        }
 
-def get_statistics():
-    connection = get_connection()
+        .meme-image {
+            height: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background:
+                linear-gradient(135deg, #181818, #050505);
+        }
 
-    total_messages = connection.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM messages
-        """
-    ).fetchone()["count"]
+        .meme-image:before {
+            content: "2026";
+            position: absolute;
+            font-family: 'Oswald', sans-serif;
+            font-size: 80px;
+            font-weight: 700;
+            color: rgba(255,255,255,.025);
+        }
 
-    total_users = connection.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM users
-        """
-    ).fetchone()["count"]
+        .meme-placeholder {
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+        }
 
-    active_users = connection.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM users
-        WHERE messages > 0
-        """
-    ).fetchone()["count"]
+        .meme-placeholder .big {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 32px;
+            line-height: 1;
+        }
 
-    top_users = connection.execute(
-        """
-        SELECT
-            full_name,
-            username,
-            messages
-        FROM users
-        ORDER BY messages DESC
-        LIMIT 10
-        """
-    ).fetchall()
+        .meme-placeholder .red {
+            color: var(--red);
+        }
 
-    best_month = connection.execute(
-        """
-        SELECT
-            strftime('%m', created_at) AS month,
-            COUNT(*) AS messages
-        FROM messages
-        GROUP BY month
-        ORDER BY messages DESC
-        LIMIT 1
-        """
-    ).fetchone()
+        .meme-info {
+            padding: 13px 15px;
+            display: flex;
+            justify-content: space-between;
+            color: #999;
+            font-size: 11px;
+        }
 
-    best_day = connection.execute(
-        """
-        SELECT
-            DATE(created_at) AS day,
-            COUNT(*) AS messages
-        FROM messages
-        GROUP BY DATE(created_at)
-        ORDER BY messages DESC
-        LIMIT 1
-        """
-    ).fetchone()
+        .meme-info strong {
+            color: white;
+        }
 
-    connection.close()
+        /* TRACK */
 
-    return {
-        "total_messages": total_messages,
-        "total_users": total_users,
-        "active_users": active_users,
-        "top_users": top_users,
-        "best_month": best_month,
-        "best_day": best_day,
+        .track-card {
+            position: relative;
+            background:
+                linear-gradient(145deg, #1a1a1a, #080808);
+            border: 1px solid rgba(255,23,56,.25);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,.45);
+        }
+
+        .track-cover {
+            height: 310px;
+            position: relative;
+            background:
+                radial-gradient(circle at 70% 35%, rgba(255,20,55,.6), transparent 22%),
+                radial-gradient(circle at 35% 70%, rgba(110,0,20,.5), transparent 30%),
+                linear-gradient(135deg, #242424, #050505 60%);
+            overflow: hidden;
+        }
+
+        .track-cover:before {
+            content: "NO";
+            position: absolute;
+            left: -15px;
+            top: 5px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 150px;
+            font-weight: 700;
+            line-height: 1;
+            color: rgba(255,255,255,.04);
+        }
+
+        .track-cover:after {
+            content: "FEAR";
+            position: absolute;
+            right: -10px;
+            bottom: -15px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 100px;
+            font-weight: 700;
+            color: rgba(255,23,56,.12);
+        }
+
+        .track-number {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            color: var(--red);
+            letter-spacing: 2px;
+        }
+
+        .track-info {
+            padding: 22px;
+        }
+
+        .track-artist {
+            color: var(--red);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .track-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 43px;
+            line-height: 1;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .track-meta {
+            color: var(--gray);
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .vote-button {
+            width: 100%;
+            border: none;
+            background: var(--red);
+            color: white;
+            padding: 17px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .vote-button:active {
+            transform: scale(.98);
+        }
+
+        .vote-button.voted {
+            background: #242424;
+            color: #888;
+            border: 1px solid var(--line);
+        }
+
+        .votes {
+            text-align: center;
+            margin-top: 13px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .votes strong {
+            color: white;
+        }
+
+        /* BOTTOM NAV */
+
+        .bottom-nav {
+            position: fixed;
+            z-index: 200;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(520px, 100%);
+            padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
+            background: rgba(7,7,7,.93);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--line);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #666;
+            padding: 9px 4px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-icon {
+            font-size: 17px;
+            display: block;
+            margin-bottom: 5px;
+            filter: grayscale(1);
+        }
+
+        .nav-label {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .nav-button.active {
+            color: white;
+        }
+
+        .nav-button.active .nav-icon {
+            filter: none;
+            color: var(--red);
+        }
+
+        /* TOAST */
+
+        .toast {
+            position: fixed;
+            z-index: 500;
+            left: 50%;
+            bottom: 95px;
+            transform: translate(-50%, 20px);
+            background: #1d1d1d;
+            border: 1px solid var(--line);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 39px;
+            }
+
+            .hero {
+                min-height: 300px;
+            }
+
+            .track-cover {
+                height: 270px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+        <div class="logo">V<span>I</span>PERR</div>
+        <div class="year">20 / 26</div>
+    </header>
+
+    <!-- ГЛАВНАЯ -->
+    <main id="home" class="page active">
+
+        <section class="hero">
+            <div class="hero-content">
+                <div class="eyebrow">THE COMMUNITY ARCHIVE</div>
+
+                <h1>
+                    VIPERR<br>
+                    <span>2026</span>
+                </h1>
+
+                <p class="hero-description">
+                    Год, который останется внутри комьюнити.
+                    Музыка, мемы, моменты и главный трек года.
+                </p>
+            </div>
+        </section>
+
+        <div class="section-title">
+            <h2>Этот год</h2>
+            <span>COMMUNITY</span>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat">
+                <div class="stat-number">2026</div>
+                <div class="stat-label">Our year</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number">01</div>
+                <div class="stat-label">Track of the year</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Memories</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number">VIP</div>
+                <div class="stat-label">Community</div>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2>2026</h2>
+        </div>
+
+        <div class="quote">
+            NO LOVE.<br>
+            NO FEAR.<br>
+            JUST VIPERR.
+        </div>
+
+    </main>
+
+    <!-- МЕМЫ -->
+    <main id="memes" class="page">
+
+        <div class="section-title">
+            <h2>Мемы</h2>
+            <span>2026 ARCHIVE</span>
+        </div>
+
+        <div class="meme">
+            <div class="meme-image">
+                <div class="meme-placeholder">
+                    <div class="big">
+                        WHEN YOU<br>
+                        <span class="red">HEAR VIPERR</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meme-info">
+                <strong>VIPERR MOMENT #001</strong>
+                <span>2026</span>
+            </div>
+        </div>
+
+        <div class="meme">
+            <div class="meme-image">
+                <div class="meme-placeholder">
+                    <div class="big">
+                        BRO<br>
+                        <span class="red">IT'S 4AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meme-info">
+                <strong>VIPERR MOMENT #002</strong>
+                <span>2026</span>
+            </div>
+        </div>
+
+        <div class="meme">
+            <div class="meme-image">
+                <div class="meme-placeholder">
+                    <div class="big">
+                        ONE MORE<br>
+                        <span class="red">TRACK</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meme-info">
+                <strong>VIPERR MOMENT #003</strong>
+                <span>2026</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ТРЕК -->
+    <main id="track" class="page">
+
+        <div class="section-title">
+            <h2>Трек года</h2>
+            <span>2026</span>
+        </div>
+
+        <div class="track-card">
+
+            <div class="track-cover">
+                <div class="track-number">01 / 2026</div>
+            </div>
+
+            <div class="track-info">
+
+                <div class="track-artist">
+                    9MICE
+                </div>
+
+                <div class="track-name">
+                    NO FEAR
+                </div>
+
+                <div class="track-meta">
+                    THE FIRST NOMINEE · VIPERR COMMUNITY 2026
+                </div>
+
+                <button
+                    id="voteButton"
+                    class="vote-button"
+                    onclick="vote()">
+                    ГОЛОСОВАТЬ ЗА ТРЕК
+                </button>
+
+                <div class="votes">
+                    Голосов: <strong id="voteCount">0</strong>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- NAVIGATION -->
+
+<nav class="bottom-nav">
+
+    <button
+        class="nav-button active"
+        onclick="openPage('home', this)">
+
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">ГЛАВНАЯ</span>
+
+    </button>
+
+    <button
+        class="nav-button"
+        onclick="openPage('memes', this)">
+
+        <span class="nav-icon">✦</span>
+        <span class="nav-label">МЕМЫ</span>
+
+    </button>
+
+    <button
+        class="nav-button"
+        onclick="openPage('track', this)">
+
+        <span class="nav-icon">♫</span>
+        <span class="nav-label">ТРЕК</span>
+
+    </button>
+
+</nav>
+
+<div id="toast" class="toast">
+    Голос принят
+</div>
+
+<script>
+
+    // TELEGRAM MINI APP
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+
+        try {
+            tg.setHeaderColor("#070707");
+            tg.setBackgroundColor("#070707");
+        } catch (e) {}
     }
 
 
-def get_user_statistics(user_id: int):
-    connection = get_connection()
+    // NAVIGATION
 
-    user = connection.execute(
-        """
-        SELECT
-            full_name,
-            username,
-            messages,
-            first_seen,
-            last_seen
-        FROM users
-        WHERE user_id = ?
-        """,
-        (user_id,),
-    ).fetchone()
+    function openPage(pageId, button) {
 
-    connection.close()
+        document.querySelectorAll(".page").forEach(page => {
+            page.classList.remove("active");
+        });
 
-    return user
+        document.querySelectorAll(".nav-button").forEach(btn => {
+            btn.classList.remove("active");
+        });
 
+        document.getElementById(pageId).classList.add("active");
 
-# =========================================================
-# KEYBOARDS
-# =========================================================
+        if (button) {
+            button.classList.add("active");
+        }
 
-def main_keyboard():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="📊 Итоги 2026",
-                    callback_data="results",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="👤 Мои итоги",
-                    callback_data="my_results",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="🏆 Топ комьюнити",
-                    callback_data="top",
-                )
-            ],
-        ]
-    )
-
-
-def results_keyboard():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="🏆 Топ участников",
-                    callback_data="top",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="👤 Мои итоги",
-                    callback_data="my_results",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="🔙 Главное меню",
-                    callback_data="home",
-                )
-            ],
-        ]
-    )
-
-
-def back_keyboard():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="🔙 Главное меню",
-                    callback_data="home",
-                )
-            ]
-        ]
-    )
-
-
-# =========================================================
-# START
-# =========================================================
-
-@dp.message(CommandStart())
-async def start_handler(message: Message):
-
-    text = (
-        "🟣 <b>VIPERR</b>\n"
-        "<b>ИТОГИ 2026</b>\n\n"
-
-        "━━━━━━━━━━━━━━━━━━\n\n"
-
-        "Один год.\n"
-        "Одно комьюнити.\n"
-        "Тысячи историй.\n\n"
-
-        "Здесь собраны итоги нашего года:\n"
-        "активность, участники и главные цифры.\n\n"
-
-        "Готов посмотреть? 👀"
-    )
-
-    await message.answer(
-        text,
-        reply_markup=main_keyboard(),
-    )
-
-
-# =========================================================
-# СБОР СООБЩЕНИЙ ИЗ ГРУППЫ
-# =========================================================
-
-@dp.message(F.chat.id == GROUP_ID)
-async def group_message_handler(message: Message):
-
-    if not message.from_user:
-        return
-
-    # Игнорируем сообщения от ботов
-    if message.from_user.is_bot:
-        return
-
-    full_name = (
-        message.from_user.full_name
-        or message.from_user.username
-        or "Unknown"
-    )
-
-    save_message(
-        user_id=message.from_user.id,
-        username=message.from_user.username,
-        full_name=full_name,
-    )
-
-
-# =========================================================
-# ГЛАВНОЕ МЕНЮ
-# =========================================================
-
-@dp.callback_query(F.data == "home")
-async def home_handler(callback: CallbackQuery):
-
-    text = (
-        "🟣 <b>VIPERR — ИТОГИ 2026</b>\n\n"
-
-        "━━━━━━━━━━━━━━━━━━\n\n"
-
-        "Комьюнити — это не цифры.\n"
-        "Но цифры помогают вспомнить,\n"
-        "каким был этот год.\n\n"
-
-        "Выбирай раздел 👇"
-    )
-
-    await callback.message.edit_text(
-        text,
-        reply_markup=main_keyboard(),
-    )
-
-    await callback.answer()
-
-
-# =========================================================
-# ИТОГИ ГОДА
-# =========================================================
-
-@dp.callback_query(F.data == "results")
-async def results_handler(callback: CallbackQuery):
-
-    stats = get_statistics()
-
-    total_messages = stats["total_messages"]
-    total_users = stats["total_users"]
-    active_users = stats["active_users"]
-
-    # -----------------------------------------------------
-    # ЛУЧШИЙ МЕСЯЦ
-    # -----------------------------------------------------
-
-    best_month = stats["best_month"]
-
-    months = {
-        1: "Январь",
-        2: "Февраль",
-        3: "Март",
-        4: "Апрель",
-        5: "Май",
-        6: "Июнь",
-        7: "Июль",
-        8: "Август",
-        9: "Сентябрь",
-        10: "Октябрь",
-        11: "Ноябрь",
-        12: "Декабрь",
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
-    if best_month:
 
-        month_number = int(best_month["month"])
+    // VOTING
 
-        best_month_text = (
-            f"{months.get(month_number, 'Неизвестно')} "
-            f"— {best_month['messages']:,} сообщений"
-        )
+    let votes = Number(localStorage.getItem("viperr_votes") || 0);
+    let alreadyVoted = localStorage.getItem("viperr_already_voted") === "true";
 
-    else:
+    const voteButton = document.getElementById("voteButton");
+    const voteCount = document.getElementById("voteCount");
 
-        best_month_text = "Недостаточно данных"
+    voteCount.textContent = votes;
 
-    # -----------------------------------------------------
-    # ЛУЧШИЙ ДЕНЬ
-    # -----------------------------------------------------
+    if (alreadyVoted) {
+        voteButton.textContent = "✓ ВЫ УЖЕ ГОЛОСОВАЛИ";
+        voteButton.classList.add("voted");
+    }
 
-    best_day = stats["best_day"]
 
-    if best_day:
+    function vote() {
 
-        best_day_text = (
-            f"{best_day['day']} "
-            f"— {best_day['messages']:,} сообщений"
-        )
+        if (alreadyVoted) {
+            showToast("Вы уже голосовали");
+            return;
+        }
 
-    else:
+        votes++;
 
-        best_day_text = "Недостаточно данных"
+        localStorage.setItem("viperr_votes", votes);
+        localStorage.setItem("viperr_already_voted", "true");
 
-    # -----------------------------------------------------
-    # ЭКРАН
-    # -----------------------------------------------------
+        alreadyVoted = true;
 
-    text = (
-        "🟣 <b>VIPERR — ИТОГИ 2026</b>\n\n"
+        voteCount.textContent = votes;
 
-        "━━━━━━━━━━━━━━━━━━\n"
+        voteButton.textContent = "✓ ГОЛОС ПРИНЯТ";
+        voteButton.classList.add("voted");
 
-        f"💬 Сообщений\n"
-        f"<b>{total_messages:,}</b>\n\n"
+        showToast("Голос принят");
 
-        f"👥 Участников\n"
-        f"<b>{total_users:,}</b>\n\n"
+        // Haptic feedback Telegram
 
-        f"🔥 Активных участников\n"
-        f"<b>{active_users:,}</b>\n\n"
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred("medium");
+        }
+    }
 
-        f"📅 Самый активный месяц\n"
-        f"<b>{best_month_text}</b>\n\n"
 
-        f"⚡ Самый активный день\n"
-        f"<b>{best_day_text}</b>\n"
+    // TOAST
 
-        "━━━━━━━━━━━━━━━━━━\n\n"
+    function showToast(text) {
 
-        "Это история, которую мы создали вместе 🟣"
-    )
+        const toast = document.getElementById("toast");
 
-    await callback.message.edit_text(
-        text,
-        reply_markup=results_keyboard(),
-    )
+        toast.textContent = text;
+        toast.classList.add("show");
 
-    await callback.answer()
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2200);
+    }
 
+</script>
 
-# =========================================================
-# ТОП УЧАСТНИКОВ
-# =========================================================
-
-@dp.callback_query(F.data == "top")
-async def top_handler(callback: CallbackQuery):
-
-    stats = get_statistics()
-
-    top_users = stats["top_users"]
-
-    if not top_users:
-
-        text = (
-            "🏆 <b>ТОП VIPERR</b>\n\n"
-
-            "Пока недостаточно статистики.\n\n"
-
-            "Как только появится активность,\n"
-            "здесь появится рейтинг."
-        )
-
-    else:
-
-        medals = [
-            "🥇",
-            "🥈",
-            "🥉",
-            "4️⃣",
-            "5️⃣",
-            "6️⃣",
-            "7️⃣",
-            "8️⃣",
-            "9️⃣",
-            "🔟",
-        ]
-
-        lines = [
-            "🏆 <b>ТОП VIPERR</b>",
-            "",
-            "Самые активные участники:",
-            "",
-        ]
-
-        for index, user in enumerate(top_users):
-
-            name = user["full_name"]
-
-            if user["username"]:
-                name = f"@{user['username']}"
-
-            medal = medals[index]
-
-            lines.append(
-                f"{medal} <b>{name}</b>\n"
-                f"   💬 {user['messages']:,} сообщений"
-            )
-
-        lines.extend(
-            [
-                "",
-                "━━━━━━━━━━━━━━━━━━",
-                "",
-                "Спасибо каждому, кто делает",
-                "VIPERR живым 🟣",
-            ]
-        )
-
-        text = "\n".join(lines)
-
-    await callback.message.edit_text(
-        text,
-        reply_markup=back_keyboard(),
-    )
-
-    await callback.answer()
-
-
-# =========================================================
-# ЛИЧНЫЕ ИТОГИ
-# =========================================================
-
-@dp.callback_query(F.data == "my_results")
-async def my_results_handler(callback: CallbackQuery):
-
-    user = get_user_statistics(
-        callback.from_user.id
-    )
-
-    if not user:
-
-        text = (
-            "👤 <b>ТВОИ ИТОГИ</b>\n\n"
-
-            "Я пока не нашёл тебя в статистике.\n\n"
-
-            "Напиши сообщение в VIPERR,\n"
-            "и бот начнёт считать твою активность 🟣"
-        )
-
-    else:
-
-        first_seen = user["first_seen"][:10]
-
-        text = (
-            "👤 <b>ТВОИ ИТОГИ VIPERR</b>\n\n"
-
-            "━━━━━━━━━━━━━━━━━━\n\n"
-
-            f"💬 Твоих сообщений\n"
-            f"<b>{user['messages']:,}</b>\n\n"
-
-            f"📅 В статистике с\n"
-            f"<b>{first_seen}</b>\n\n"
-
-            "━━━━━━━━━━━━━━━━━━\n\n"
-
-            "Ты — часть истории VIPERR 🟣"
-        )
-
-    await callback.message.edit_text(
-        text,
-        reply_markup=back_keyboard(),
-    )
-
-    await callback.answer()
-
-
-# =========================================================
-# ОБРАБОТКА НЕОЖИДАННЫХ ОШИБОК
-# =========================================================
-
-@dp.errors()
-async def error_handler(event):
-
-    logger.error(
-        "Ошибка при обработке события: %s",
-        event.exception,
-    )
-
-
-# =========================================================
-# ЗАПУСК
-# =========================================================
-
-async def main():
-
-    init_database()
-
-    logger.info(
-        "🟣 VIPERR Results Bot запущен"
-    )
-
-    logger.info(
-        "GROUP_ID: %s",
-        GROUP_ID,
-    )
-
-    await bot.delete_webhook(
-        drop_pending_updates=True
-    )
-
-    await dp.start_polling(
-        bot,
-        allowed_updates=dp.resolve_used_update_types(),
-    )
-
-
-# =========================================================
-# MAIN
-# =========================================================
-
-if __name__ == "__main__":
-
-    try:
-
-        asyncio.run(main())
-
-    except KeyboardInterrupt:
-
-        logger.info(
-            "Бот остановлен"
-        )
+</body>
+</html>
