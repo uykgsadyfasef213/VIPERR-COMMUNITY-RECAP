@@ -316,7 +316,43 @@
                     <div class="track-item">
                         <div class="track-info">
                             <div class="track-title">Limousine Music</div>
-                                    function sendVote(choice) {
+                            <div class="track author">Kai Angel</div>
+                        </div>
+                        <button class="play-btn" onclick="showTrackInfo('Kai Angel — Limousine Music')">Инфо</button>
+                    </div>
+                        <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // --- ПЛАВНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+        function switchTab(tabId) {
+            const currentActiveTab = document.querySelector('.tab-content.active');
+            if (currentActiveTab && currentActiveTab.id === tabId) return;
+
+            if (currentActiveTab) {
+                currentActiveTab.classList.remove('active');
+            }
+
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            setTimeout(() => {
+                document.getElementById(tabId).classList.add('active');
+                document.getElementById('btn-' + tabId).classList.add('active');
+            }, 50);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // --- ДЕЙСТВИЯ ДЛЯ КНОПОК ---
+        function showTrackInfo(trackName) {
+            tg.showAlert("Выбран трек: " + trackName + "\n\nВ следующем обновлении мы подключим сюда плеер!");
+        }
+
+        function sendVote(choice) {
             tg.showConfirm("Отдать голос за " + choice + "?", function(isConfirmed) {
                 if (isConfirmed) {
                     tg.showAlert("Твой голос засчитан! ♱");
