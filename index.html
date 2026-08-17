@@ -1,364 +1,720 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIPERR RECAP</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --card-bg: rgba(18, 18, 18, 0.7);
-            --accent-color: #ffffff;
-            --text-muted: #666666;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --glow-color: rgba(255, 255, 255, 0.03);
-        }
+import asyncio
+import logging
+import os
+import sqlite3
+from datetime import datetime
+from pathlib import Path
 
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--bg-color);
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            padding-bottom: 100px;
-            text-align: center;
-            user-select: none;
-            -webkit-user-select: none;
-            overflow-x: hidden;
-            position: relative;
-        }
+from aiogram import Bot, Dispatcher, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.filters import CommandStart
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
+from dotenv import load_dotenv
 
-        /* Текстура шума (Film Grain) — ультра-легкая и плавная */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.04;
-            path: initial;
-            pointer-events: none;
-            z-index: 9999;
-        }
 
-        /* Градиентное свечение на заднем фоне */
-        .bg-glow {
-            position: fixed;
-            top: -20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
+# =========================================================
+# НАСТРОЙКИ
+# =========================================================
 
-        header {
-            padding: 30px 10px 20px;
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-            z-index: 10;
-        }
+load_dotenv()
 
-        h1 {
-            font-size: 26px;
-            letter-spacing: 6px;
-            margin: 0;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GROUP_ID = os.getenv("GROUP_ID")
 
-        .subtitle {
-            font-size: 9px;
-            color: var(--text-muted);
-            letter-spacing: 3px;
-            margin-top: 8px;
-            text-transform: uppercase;
-        }
+if not BOT_TOKEN:
+    raise ValueError(
+        "❌ Не найден BOT_TOKEN. "
+        "Добавь его в переменные окружения."
+    )
 
-        /* Оболочка для плавного переключения страниц */
-        .tab-container {
-            position: relative;
-            width: 100%;
-            min-height: 60vh;
-            z-index: 10;
-        }
+if not GROUP_ID:
+    raise ValueError(
+        "❌ Не найден GROUP_ID. "
+        "Добавь ID Telegram-группы."
+    )
 
-        /* Стили вкладок и ПЛАВНАЯ АНИМАЦИЯ */
-        .tab-content {
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transform: scale(0.98) translateY(10px);
-            visibility: hidden;
-            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
-                        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                        visibility 0.4s;
-        }
+GROUP_ID = int(GROUP_ID)
 
-        /* Активная вкладка плавно проявляется */
-        .tab-content.active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            visibility: visible;
-            position: relative;
-        }
+DB_PATH = Path("viperr.db")
 
-        /* Премиальные карточки с размытием заднего плана (Glassmorphism) */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            padding: 24px;
-            margin: 16px auto;
-            max-width: 400px;
-            border-radius: 6px;
-            text-align: left;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s ease;
-        }
 
-        .card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+# =========================================================
+# ЛОГИ
+# =========================================================
 
-        .card h2 {
-            font-size: 14px;
-            letter-spacing: 3px;
-            margin-top: 0;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
 
-        .card p {
-            font-size: 13px;
-            color: #aaaaaa;
-            line-height: 1.6;
-            margin: 0;
-        }
+logger = logging.getLogger(__name__)
 
-        /* Музыкальный трек-лист */
-        .track-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
 
-        .track-item:last-child {
-            border-bottom: none;
-        }
+# =========================================================
+# TELEGRAM BOT
+# =========================================================
 
-        .track-info {
-            text-align: left;
-        }
+bot = Bot(
+    token=BOT_TOKEN,
+    default=DefaultBotProperties(
+        parse_mode=ParseMode.HTML
+    ),
+)
 
-        .track-title {
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+dp = Dispatcher()
 
-        .track-author {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
 
-        .play-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--accent-color);
-            padding: 8px 16px;
-            font-family: inherit;
-            font-size: 10px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
+# =========================================================
+# DATABASE
+# =========================================================
 
-        .play-btn:active {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            border-color: var(--accent-color);
-        }
+def get_connection():
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
+    return connection
 
-        /* Элементы голосования */
-        .vote-option {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            margin: 12px 0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-            text-align: left;
-        }
 
-        .vote-option:active {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--accent-color);
-            transform: translateX(4px);
-        }
+def init_database():
+    connection = get_connection()
 
-        /* Нижнее навигационное меню (Зафиксировано и размыто) */
-        .nav-menu {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            padding: 20px 0 calc(20px + env(safe-area-inset-bottom, 0px));
-            z-index: 100;
-        }
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY,
+            username TEXT,
+            full_name TEXT,
+            messages INTEGER DEFAULT 0,
+            first_seen TEXT,
+            last_seen TEXT
+        )
+        """
+    )
 
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            text-transform: uppercase;
-            padding: 6px 12px;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            position: relative;
-        }
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            created_at TEXT NOT NULL
+        )
+        """
+    )
 
-        .nav-btn.active {
-            color: var(--accent-color);
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-        }
+    connection.commit()
+    connection.close()
 
-        /* Точка под активной кнопкой меню */
-        .nav-btn::after {
-            content: "";
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 12px;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: transform 0.3s ease;
-        }
+    logger.info("Database initialized")
 
-        .nav-btn.active::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-    </style>
-</head>
-<body>
 
-    <!-- Размытое свечение -->
-    <div class="bg-glow"></div>
+def save_message(
+    user_id: int,
+    username: str | None,
+    full_name: str,
+):
+    now = datetime.utcnow().isoformat()
 
-    <header>
-        <h1>♱ VIPERR RECAP ♱</h1>
-        <div class="subtitle">Community Year in Review</div>
-    </header>
+    connection = get_connection()
 
-    <!-- Оболочка для вкладок -->
-    <div class="tab-container">
-        
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
-        <div id="main-tab" class="tab-content active">
-            <div class="card">
-                <h2>ИТОГИ ГОДА</h2>
-                <p>Этот год навсегда изменил вектор индустрии. Новые звуковые эксперименты Viperr и тотальный контроль инфополя.</p>
-            </div>
-            <div class="card">
-                <h2>СОЛЬНАЯ ЭРА</h2>
-                <p>Kai Angel и 9mice двигаются по собственным траекториям, разрывая чарты и готовя масштабные шоу в МТС Live Холле.</p>
-            </div>
-        </div>
+    existing_user = connection.execute(
+        """
+        SELECT user_id
+        FROM users
+        WHERE user_id = ?
+        """,
+        (user_id,),
+    ).fetchone()
 
-        <!-- ВКЛАДКА 2: МУЗЫКА -->
-        <div id="music-tab" class="tab-content">
-            <div class="card">
-                <h2>ГЛАВНЫЕ ТРЕКИ</h2>
-                <p>Релизы, которые разрывали площадки и наушники фанатов в этом году.</p>
-                
-                <div style="margin-top: 25px;">
-                    <div class="track-item">
-                        <div class="track-info">
-                            <div class="track-title">No Fear</div>
-                            <div class="track-author">9mice</div>
-                        </div>
-                        <button class="play-btn" onclick="showTrackInfo('9mice — No Fear')">Инфо</button>
-                    </div>
+    if existing_user:
+        connection.execute(
+            """
+            UPDATE users
+            SET
+                username = ?,
+                full_name = ?,
+                messages = messages + 1,
+                last_seen = ?
+            WHERE user_id = ?
+            """,
+            (
+                username,
+                full_name,
+                now,
+                user_id,
+            ),
+        )
 
-                    <div class="track-item">
-                        <div class="track-info">
-                            <div class="track-title">Limousine Music</div>
-                            <div class="track author">Kai Angel</div>
-                        </div>
-                        <button class="play-btn" onclick="showTrackInfo('Kai Angel — Limousine Music')">Инфо</button>
-                    </div>
-                        <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    else:
+        connection.execute(
+            """
+            INSERT INTO users (
+                user_id,
+                username,
+                full_name,
+                messages,
+                first_seen,
+                last_seen
+            )
+            VALUES (?, ?, ?, 1, ?, ?)
+            """,
+            (
+                user_id,
+                username,
+                full_name,
+                now,
+                now,
+            ),
+        )
 
-        // --- ПЛАВНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
-        function switchTab(tabId) {
-            const currentActiveTab = document.querySelector('.tab-content.active');
-            if (currentActiveTab && currentActiveTab.id === tabId) return;
+    connection.execute(
+        """
+        INSERT INTO messages (
+            user_id,
+            created_at
+        )
+        VALUES (?, ?)
+        """,
+        (
+            user_id,
+            now,
+        ),
+    )
 
-            if (currentActiveTab) {
-                currentActiveTab.classList.remove('active');
-            }
+    connection.commit()
+    connection.close()
 
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
 
-            setTimeout(() => {
-                document.getElementById(tabId).classList.add('active');
-                document.getElementById('btn-' + tabId).classList.add('active');
-            }, 50);
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-        }
+def get_statistics():
+    connection = get_connection()
 
-        // --- ДЕЙСТВИЯ ДЛЯ КНОПОК ---
-        function showTrackInfo(trackName) {
-            tg.showAlert("Выбран трек: " + trackName + "\n\nВ следующем обновлении мы подключим сюда плеер!");
-        }
+    total_messages = connection.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM messages
+        """
+    ).fetchone()["count"]
 
-        function sendVote(choice) {
-            tg.showConfirm("Отдать голос за " + choice + "?", function(isConfirmed) {
-                if (isConfirmed) {
-                    tg.showAlert("Твой голос засчитан! ♱");
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+    total_users = connection.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM users
+        """
+    ).fetchone()["count"]
+
+    active_users = connection.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM users
+        WHERE messages > 0
+        """
+    ).fetchone()["count"]
+
+    top_users = connection.execute(
+        """
+        SELECT
+            full_name,
+            username,
+            messages
+        FROM users
+        ORDER BY messages DESC
+        LIMIT 10
+        """
+    ).fetchall()
+
+    best_month = connection.execute(
+        """
+        SELECT
+            strftime('%m', created_at) AS month,
+            COUNT(*) AS messages
+        FROM messages
+        GROUP BY month
+        ORDER BY messages DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    best_day = connection.execute(
+        """
+        SELECT
+            DATE(created_at) AS day,
+            COUNT(*) AS messages
+        FROM messages
+        GROUP BY DATE(created_at)
+        ORDER BY messages DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    connection.close()
+
+    return {
+        "total_messages": total_messages,
+        "total_users": total_users,
+        "active_users": active_users,
+        "top_users": top_users,
+        "best_month": best_month,
+        "best_day": best_day,
+    }
+
+
+def get_user_statistics(user_id: int):
+    connection = get_connection()
+
+    user = connection.execute(
+        """
+        SELECT
+            full_name,
+            username,
+            messages,
+            first_seen,
+            last_seen
+        FROM users
+        WHERE user_id = ?
+        """,
+        (user_id,),
+    ).fetchone()
+
+    connection.close()
+
+    return user
+
+
+# =========================================================
+# KEYBOARDS
+# =========================================================
+
+def main_keyboard():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="📊 Итоги 2026",
+                    callback_data="results",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="👤 Мои итоги",
+                    callback_data="my_results",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="🏆 Топ комьюнити",
+                    callback_data="top",
+                )
+            ],
+        ]
+    )
+
+
+def results_keyboard():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🏆 Топ участников",
+                    callback_data="top",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="👤 Мои итоги",
+                    callback_data="my_results",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="🔙 Главное меню",
+                    callback_data="home",
+                )
+            ],
+        ]
+    )
+
+
+def back_keyboard():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🔙 Главное меню",
+                    callback_data="home",
+                )
+            ]
+        ]
+    )
+
+
+# =========================================================
+# START
+# =========================================================
+
+@dp.message(CommandStart())
+async def start_handler(message: Message):
+
+    text = (
+        "🟣 <b>VIPERR</b>\n"
+        "<b>ИТОГИ 2026</b>\n\n"
+
+        "━━━━━━━━━━━━━━━━━━\n\n"
+
+        "Один год.\n"
+        "Одно комьюнити.\n"
+        "Тысячи историй.\n\n"
+
+        "Здесь собраны итоги нашего года:\n"
+        "активность, участники и главные цифры.\n\n"
+
+        "Готов посмотреть? 👀"
+    )
+
+    await message.answer(
+        text,
+        reply_markup=main_keyboard(),
+    )
+
+
+# =========================================================
+# СБОР СООБЩЕНИЙ ИЗ ГРУППЫ
+# =========================================================
+
+@dp.message(F.chat.id == GROUP_ID)
+async def group_message_handler(message: Message):
+
+    if not message.from_user:
+        return
+
+    # Игнорируем сообщения от ботов
+    if message.from_user.is_bot:
+        return
+
+    full_name = (
+        message.from_user.full_name
+        or message.from_user.username
+        or "Unknown"
+    )
+
+    save_message(
+        user_id=message.from_user.id,
+        username=message.from_user.username,
+        full_name=full_name,
+    )
+
+
+# =========================================================
+# ГЛАВНОЕ МЕНЮ
+# =========================================================
+
+@dp.callback_query(F.data == "home")
+async def home_handler(callback: CallbackQuery):
+
+    text = (
+        "🟣 <b>VIPERR — ИТОГИ 2026</b>\n\n"
+
+        "━━━━━━━━━━━━━━━━━━\n\n"
+
+        "Комьюнити — это не цифры.\n"
+        "Но цифры помогают вспомнить,\n"
+        "каким был этот год.\n\n"
+
+        "Выбирай раздел 👇"
+    )
+
+    await callback.message.edit_text(
+        text,
+        reply_markup=main_keyboard(),
+    )
+
+    await callback.answer()
+
+
+# =========================================================
+# ИТОГИ ГОДА
+# =========================================================
+
+@dp.callback_query(F.data == "results")
+async def results_handler(callback: CallbackQuery):
+
+    stats = get_statistics()
+
+    total_messages = stats["total_messages"]
+    total_users = stats["total_users"]
+    active_users = stats["active_users"]
+
+    # -----------------------------------------------------
+    # ЛУЧШИЙ МЕСЯЦ
+    # -----------------------------------------------------
+
+    best_month = stats["best_month"]
+
+    months = {
+        1: "Январь",
+        2: "Февраль",
+        3: "Март",
+        4: "Апрель",
+        5: "Май",
+        6: "Июнь",
+        7: "Июль",
+        8: "Август",
+        9: "Сентябрь",
+        10: "Октябрь",
+        11: "Ноябрь",
+        12: "Декабрь",
+    }
+
+    if best_month:
+
+        month_number = int(best_month["month"])
+
+        best_month_text = (
+            f"{months.get(month_number, 'Неизвестно')} "
+            f"— {best_month['messages']:,} сообщений"
+        )
+
+    else:
+
+        best_month_text = "Недостаточно данных"
+
+    # -----------------------------------------------------
+    # ЛУЧШИЙ ДЕНЬ
+    # -----------------------------------------------------
+
+    best_day = stats["best_day"]
+
+    if best_day:
+
+        best_day_text = (
+            f"{best_day['day']} "
+            f"— {best_day['messages']:,} сообщений"
+        )
+
+    else:
+
+        best_day_text = "Недостаточно данных"
+
+    # -----------------------------------------------------
+    # ЭКРАН
+    # -----------------------------------------------------
+
+    text = (
+        "🟣 <b>VIPERR — ИТОГИ 2026</b>\n\n"
+
+        "━━━━━━━━━━━━━━━━━━\n"
+
+        f"💬 Сообщений\n"
+        f"<b>{total_messages:,}</b>\n\n"
+
+        f"👥 Участников\n"
+        f"<b>{total_users:,}</b>\n\n"
+
+        f"🔥 Активных участников\n"
+        f"<b>{active_users:,}</b>\n\n"
+
+        f"📅 Самый активный месяц\n"
+        f"<b>{best_month_text}</b>\n\n"
+
+        f"⚡ Самый активный день\n"
+        f"<b>{best_day_text}</b>\n"
+
+        "━━━━━━━━━━━━━━━━━━\n\n"
+
+        "Это история, которую мы создали вместе 🟣"
+    )
+
+    await callback.message.edit_text(
+        text,
+        reply_markup=results_keyboard(),
+    )
+
+    await callback.answer()
+
+
+# =========================================================
+# ТОП УЧАСТНИКОВ
+# =========================================================
+
+@dp.callback_query(F.data == "top")
+async def top_handler(callback: CallbackQuery):
+
+    stats = get_statistics()
+
+    top_users = stats["top_users"]
+
+    if not top_users:
+
+        text = (
+            "🏆 <b>ТОП VIPERR</b>\n\n"
+
+            "Пока недостаточно статистики.\n\n"
+
+            "Как только появится активность,\n"
+            "здесь появится рейтинг."
+        )
+
+    else:
+
+        medals = [
+            "🥇",
+            "🥈",
+            "🥉",
+            "4️⃣",
+            "5️⃣",
+            "6️⃣",
+            "7️⃣",
+            "8️⃣",
+            "9️⃣",
+            "🔟",
+        ]
+
+        lines = [
+            "🏆 <b>ТОП VIPERR</b>",
+            "",
+            "Самые активные участники:",
+            "",
+        ]
+
+        for index, user in enumerate(top_users):
+
+            name = user["full_name"]
+
+            if user["username"]:
+                name = f"@{user['username']}"
+
+            medal = medals[index]
+
+            lines.append(
+                f"{medal} <b>{name}</b>\n"
+                f"   💬 {user['messages']:,} сообщений"
+            )
+
+        lines.extend(
+            [
+                "",
+                "━━━━━━━━━━━━━━━━━━",
+                "",
+                "Спасибо каждому, кто делает",
+                "VIPERR живым 🟣",
+            ]
+        )
+
+        text = "\n".join(lines)
+
+    await callback.message.edit_text(
+        text,
+        reply_markup=back_keyboard(),
+    )
+
+    await callback.answer()
+
+
+# =========================================================
+# ЛИЧНЫЕ ИТОГИ
+# =========================================================
+
+@dp.callback_query(F.data == "my_results")
+async def my_results_handler(callback: CallbackQuery):
+
+    user = get_user_statistics(
+        callback.from_user.id
+    )
+
+    if not user:
+
+        text = (
+            "👤 <b>ТВОИ ИТОГИ</b>\n\n"
+
+            "Я пока не нашёл тебя в статистике.\n\n"
+
+            "Напиши сообщение в VIPERR,\n"
+            "и бот начнёт считать твою активность 🟣"
+        )
+
+    else:
+
+        first_seen = user["first_seen"][:10]
+
+        text = (
+            "👤 <b>ТВОИ ИТОГИ VIPERR</b>\n\n"
+
+            "━━━━━━━━━━━━━━━━━━\n\n"
+
+            f"💬 Твоих сообщений\n"
+            f"<b>{user['messages']:,}</b>\n\n"
+
+            f"📅 В статистике с\n"
+            f"<b>{first_seen}</b>\n\n"
+
+            "━━━━━━━━━━━━━━━━━━\n\n"
+
+            "Ты — часть истории VIPERR 🟣"
+        )
+
+    await callback.message.edit_text(
+        text,
+        reply_markup=back_keyboard(),
+    )
+
+    await callback.answer()
+
+
+# =========================================================
+# ОБРАБОТКА НЕОЖИДАННЫХ ОШИБОК
+# =========================================================
+
+@dp.errors()
+async def error_handler(event):
+
+    logger.error(
+        "Ошибка при обработке события: %s",
+        event.exception,
+    )
+
+
+# =========================================================
+# ЗАПУСК
+# =========================================================
+
+async def main():
+
+    init_database()
+
+    logger.info(
+        "🟣 VIPERR Results Bot запущен"
+    )
+
+    logger.info(
+        "GROUP_ID: %s",
+        GROUP_ID,
+    )
+
+    await bot.delete_webhook(
+        drop_pending_updates=True
+    )
+
+    await dp.start_polling(
+        bot,
+        allowed_updates=dp.resolve_used_update_types(),
+    )
+
+
+# =========================================================
+# MAIN
+# =========================================================
+
+if __name__ == "__main__":
+
+    try:
+
+        asyncio.run(main())
+
+    except KeyboardInterrupt:
+
+        logger.info(
+            "Бот остановлен"
+        )
