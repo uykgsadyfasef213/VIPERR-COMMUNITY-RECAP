@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -18,15 +19,11 @@
 
         :root {
             --bg: #050505;
-            --bg2: #0d0d0d;
             --card: #111111;
-            --card2: #171717;
             --red: #ff1738;
-            --red2: #ff3652;
-            --red-dark: #8d071b;
             --white: #f4f4f4;
             --gray: #858585;
-            --line: rgba(255,255,255,0.08);
+            --line: rgba(255,255,255,.08);
         }
 
         html {
@@ -35,91 +32,38 @@
 
         body {
             margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
             background:
                 radial-gradient(circle at 50% -10%, rgba(255,0,45,.22), transparent 32%),
                 radial-gradient(circle at 0% 55%, rgba(255,0,30,.055), transparent 25%),
-                radial-gradient(circle at 100% 75%, rgba(255,255,255,.035), transparent 20%),
-                linear-gradient(180deg,#090909 0%,#030303 100%);
+                linear-gradient(180deg, #090909 0%, #030303 100%);
             color: var(--white);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: Inter, Arial, sans-serif;
         }
 
-        /* SHADOW / GRAIN */
-
-        body:before {
+        body::before {
             content: "";
             position: fixed;
             inset: 0;
             pointer-events: none;
             opacity: .045;
-            background-image:
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(255,255,255,.3) 0px,
-                    rgba(255,255,255,.3) 1px,
-                    transparent 1px,
-                    transparent 4px
-                );
             z-index: 100;
-        }
-
-        /* AMERICAN BACKGROUND */
-
-        body:after {
-            content: "USA";
-            position: fixed;
-            right: -65px;
-            top: 36%;
-            font-family: 'Oswald', sans-serif;
-            font-size: 120px;
-            font-weight: 700;
-            letter-spacing: -7px;
-            color: rgba(255,255,255,.018);
-            transform: rotate(90deg);
-            pointer-events: none;
-            z-index: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255,255,255,.3) 0 1px,
+                transparent 1px 4px
+            );
         }
 
         .app {
+            width: 100%;
             max-width: 520px;
-            margin: 0 auto;
             min-height: 100vh;
+            margin: 0 auto;
             padding-bottom: 105px;
             position: relative;
             z-index: 1;
-        }
-
-        /* DECOR */
-
-        .background-stars {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            opacity: .18;
-            z-index: 0;
-        }
-
-        .background-stars:before,
-        .background-stars:after {
-            position: absolute;
-            font-size: 22px;
-            color: var(--red);
-        }
-
-        .background-stars:before {
-            content: "✦  ✧  ✦";
-            top: 17%;
-            left: -8px;
-            transform: rotate(-18deg);
-        }
-
-        .background-stars:after {
-            content: "✦  ✧";
-            bottom: 23%;
-            right: 3px;
-            transform: rotate(15deg);
         }
 
         /* HEADER */
@@ -129,12 +73,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            z-index: 3;
         }
 
         .logo {
-            font-family: 'Oswald', sans-serif;
+            font-family: Oswald, sans-serif;
             font-weight: 700;
             font-size: 27px;
             letter-spacing: -1px;
@@ -145,14 +87,14 @@
         }
 
         .year {
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            background: rgba(0,0,0,.25);
+            color: var(--gray);
             font-size: 11px;
             font-weight: 800;
             letter-spacing: 2px;
-            color: var(--gray);
-            border: 1px solid var(--line);
-            padding: 7px 10px;
-            border-radius: 3px;
-            background: rgba(0,0,0,.25);
         }
 
         /* PAGES */
@@ -160,7 +102,7 @@
         .page {
             display: none;
             padding: 0 18px;
-            animation: pageIn .35s cubic-bezier(.2,.8,.2,1);
+            animation: pageIn .3s ease;
         }
 
         .page.active {
@@ -170,7 +112,7 @@
         @keyframes pageIn {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(10px);
             }
 
             to {
@@ -179,45 +121,33 @@
             }
         }
 
-        /* HOME */
+        /* HERO */
 
         .hero {
             min-height: 330px;
-            border-radius: 9px;
-            overflow: hidden;
+            padding: 24px;
+            display: flex;
+            align-items: flex-end;
             position: relative;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 9px;
             background:
                 linear-gradient(180deg, transparent 5%, rgba(0,0,0,.94) 100%),
                 radial-gradient(circle at 70% 25%, rgba(255,15,50,.42), transparent 25%),
                 linear-gradient(135deg,#191919,#050505 65%);
-            border: 1px solid var(--line);
-            display: flex;
-            align-items: flex-end;
-            padding: 24px;
             box-shadow: 0 20px 80px rgba(0,0,0,.35);
         }
 
-        .hero:before {
-            content: "★  USA  ★";
-            position: absolute;
-            right: -5px;
-            top: 22px;
-            color: rgba(255,255,255,.035);
-            font-family: 'Oswald', sans-serif;
-            font-size: 18px;
-            letter-spacing: 4px;
-            transform: rotate(90deg);
-        }
-
-        .hero:after {
+        .hero::after {
             content: "VIPERR";
             position: absolute;
-            top: 38px;
-            right: -22px;
-            font-family: 'Oswald', sans-serif;
+            top: 35px;
+            right: -20px;
+            color: rgba(255,255,255,.035);
+            font-family: Oswald, sans-serif;
             font-size: 78px;
             font-weight: 700;
-            color: rgba(255,255,255,.035);
             transform: rotate(-90deg);
         }
 
@@ -227,20 +157,19 @@
         }
 
         .eyebrow {
+            margin-bottom: 9px;
             color: var(--red);
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 3px;
-            margin-bottom: 9px;
         }
 
         h1 {
             margin: 0;
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
+            font-family: Oswald, sans-serif;
             font-size: 45px;
             line-height: .94;
-            letter-spacing: -1px;
+            text-transform: uppercase;
         }
 
         h1 span {
@@ -248,12 +177,14 @@
         }
 
         .hero-description {
+            max-width: 310px;
             margin: 16px 0 0;
             color: #aaa;
             font-size: 13px;
             line-height: 1.5;
-            max-width: 310px;
         }
+
+        /* TITLES */
 
         .section-title {
             margin: 28px 2px 13px;
@@ -264,16 +195,18 @@
 
         .section-title h2 {
             margin: 0;
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
+            font-family: Oswald, sans-serif;
             font-size: 23px;
+            text-transform: uppercase;
         }
 
         .section-title span {
-            font-size: 10px;
             color: var(--gray);
+            font-size: 10px;
             letter-spacing: 1.5px;
         }
+
+        /* STATS */
 
         .stat-grid {
             display: grid;
@@ -282,20 +215,14 @@
         }
 
         .stat {
-            background: rgba(17,17,17,.9);
+            padding: 19px;
             border: 1px solid var(--line);
             border-radius: 6px;
-            padding: 19px;
-            transition: .25s;
-        }
-
-        .stat:hover {
-            border-color: rgba(255,23,56,.3);
-            transform: translateY(-2px);
+            background: rgba(17,17,17,.9);
         }
 
         .stat-number {
-            font-family: 'Oswald', sans-serif;
+            font-family: Oswald, sans-serif;
             font-size: 31px;
         }
 
@@ -303,37 +230,29 @@
             margin-top: 4px;
             color: var(--gray);
             font-size: 10px;
-            text-transform: uppercase;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .quote {
             margin-top: 10px;
-            background: #0e0e0e;
-            border-left: 3px solid var(--red);
             padding: 18px;
-            font-family: 'Oswald', sans-serif;
+            border-left: 3px solid var(--red);
+            background: #0e0e0e;
+            font-family: Oswald, sans-serif;
             font-size: 18px;
+            line-height: 1.2;
             text-transform: uppercase;
-            letter-spacing: .5px;
-            box-shadow: 0 10px 40px rgba(0,0,0,.25);
         }
 
         /* MEMES */
 
         .meme {
             margin-bottom: 15px;
-            background: var(--card);
+            overflow: hidden;
             border: 1px solid var(--line);
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(0,0,0,.3);
-            transition: .3s;
-        }
-
-        .meme:hover {
-            transform: translateY(-3px);
-            border-color: rgba(255,23,56,.25);
+            background: var(--card);
         }
 
         .meme-image {
@@ -343,86 +262,69 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            background:
-                linear-gradient(135deg,#181818,#050505);
+            background: linear-gradient(135deg,#181818,#050505);
         }
-
-        .meme-image:before {
-            content: "2026";
-            position: absolute;
-            font-family: 'Oswald', sans-serif;
-            font-size: 80px;
-            font-weight: 700;
-            color: rgba(255,255,255,.025);
-        }
-
-        .meme-placeholder {
-            text-align: center;
-            z-index: 1;
-            padding: 20px;
-        }
-
-        .meme-placeholder .big {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            font-size: 32px;
-            line-height: 1;
-        }
-
-        .meme-placeholder .red {
-            color: var(--red);
-        }
-
-        /* NEW PHOTO MEME */
 
         .photo-meme {
-            height: auto;
-            min-height: 330px;
-            background: #050505;
+            height: 330px;
         }
 
         .photo-meme img {
             width: 100%;
             height: 100%;
-            min-height: 330px;
             object-fit: cover;
             display: block;
             filter: saturate(.85) contrast(1.05);
         }
 
-        .photo-meme:after {
+        .photo-meme::after {
             content: "";
             position: absolute;
             inset: 0;
-            background:
-                linear-gradient(
-                    180deg,
-                    transparent 35%,
-                    rgba(0,0,0,.1) 50%,
-                    rgba(0,0,0,.9) 100%
-                );
+            z-index: 1;
             pointer-events: none;
+            background: linear-gradient(
+                180deg,
+                transparent 35%,
+                rgba(0,0,0,.1) 50%,
+                rgba(0,0,0,.9) 100%
+            );
         }
 
         .ai-caption {
             position: absolute;
-            z-index: 3;
             left: 18px;
             right: 18px;
             bottom: 18px;
-            font-family: 'Oswald', sans-serif;
+            z-index: 2;
+            color: white;
+            font-family: Oswald, sans-serif;
             font-size: 42px;
             line-height: .9;
-            text-transform: uppercase;
             text-align: center;
-            color: white;
-            text-shadow:
-                0 3px 0 #000,
-                0 0 20px rgba(0,0,0,.8);
-            letter-spacing: -1px;
+            text-transform: uppercase;
+            text-shadow: 0 3px 0 #000, 0 0 20px rgba(0,0,0,.8);
         }
 
         .ai-caption span {
+            color: var(--red);
+        }
+
+        .meme-placeholder {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .meme-placeholder .big {
+            font-family: Oswald, sans-serif;
+            font-size: 32px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .red {
             color: var(--red);
         }
 
@@ -447,63 +349,24 @@
         }
 
         .track-card {
-            position: relative;
-            background:
-                linear-gradient(145deg,#181818,#080808);
+            overflow: hidden;
             border: 1px solid rgba(255,23,56,.2);
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 15px 50px rgba(0,0,0,.4);
-            transition:
-                transform .3s cubic-bezier(.2,.8,.2,1),
-                border-color .3s,
-                box-shadow .3s;
-        }
-
-        .track-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(255,23,56,.5);
-            box-shadow: 0 20px 60px rgba(255,0,40,.08);
+            background: linear-gradient(145deg,#181818,#080808);
         }
 
         .track-card.featured {
             border-color: rgba(255,23,56,.45);
-            box-shadow:
-                0 0 0 1px rgba(255,23,56,.08),
-                0 20px 70px rgba(255,0,40,.1);
         }
 
         .track-cover {
             height: 190px;
             position: relative;
+            overflow: hidden;
             background:
                 radial-gradient(circle at 70% 35%,rgba(255,20,55,.55),transparent 22%),
                 radial-gradient(circle at 35% 70%,rgba(110,0,20,.5),transparent 30%),
                 linear-gradient(135deg,#242424,#050505 60%);
-            overflow: hidden;
-        }
-
-        .track-cover:before {
-            content: "NO";
-            position: absolute;
-            left: -15px;
-            top: 5px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 125px;
-            font-weight: 700;
-            line-height: 1;
-            color: rgba(255,255,255,.04);
-        }
-
-        .track-cover:after {
-            content: "VIP";
-            position: absolute;
-            right: -10px;
-            bottom: -15px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 100px;
-            font-weight: 700;
-            color: rgba(255,23,56,.12);
         }
 
         .track-card:nth-child(2) .track-cover {
@@ -531,26 +394,26 @@
             position: absolute;
             top: 17px;
             left: 18px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 13px;
-            color: var(--red);
-            letter-spacing: 2px;
             z-index: 2;
+            color: var(--red);
+            font-family: Oswald, sans-serif;
+            font-size: 13px;
+            letter-spacing: 2px;
         }
 
         .track-type {
             position: absolute;
-            right: 16px;
             top: 16px;
+            right: 16px;
             z-index: 2;
+            padding: 6px 8px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 3px;
+            color: rgba(255,255,255,.55);
+            background: rgba(0,0,0,.2);
             font-size: 8px;
             font-weight: 900;
             letter-spacing: 1.5px;
-            color: rgba(255,255,255,.55);
-            border: 1px solid rgba(255,255,255,.12);
-            padding: 6px 8px;
-            border-radius: 3px;
-            background: rgba(0,0,0,.2);
         }
 
         .track-info {
@@ -566,79 +429,64 @@
         }
 
         .track-name {
-            font-family: 'Oswald', sans-serif;
+            margin-top: 5px;
+            font-family: Oswald, sans-serif;
             font-size: 31px;
             line-height: 1;
-            margin-top: 5px;
             text-transform: uppercase;
         }
 
         .track-meta {
+            margin-top: 9px;
             color: var(--gray);
             font-size: 10px;
-            margin-top: 9px;
             line-height: 1.4;
         }
 
         .track-button {
             width: 100%;
+            margin-top: 15px;
+            padding: 13px;
             border: 1px solid rgba(255,255,255,.1);
+            border-radius: 4px;
             background: #151515;
             color: white;
-            padding: 13px;
-            margin-top: 15px;
-            border-radius: 4px;
+            cursor: pointer;
             font-size: 10px;
             font-weight: 900;
             letter-spacing: 1.7px;
             text-transform: uppercase;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .track-button:active {
-            transform: scale(.98);
-        }
-
-        .track-button:hover {
-            background: var(--red);
-            border-color: var(--red);
         }
 
         .track-button.voted {
-            background: var(--red);
             border-color: var(--red);
+            background: var(--red);
         }
 
         .votes {
-            text-align: center;
             margin-top: 10px;
             color: #666;
             font-size: 10px;
+            text-align: center;
         }
 
         .votes strong {
             color: white;
         }
 
-        /* USA ACCESSORIES */
+        /* DECOR */
 
         .usa-decor {
-            position: relative;
             height: 95px;
             margin: 20px 0 5px;
+            position: relative;
             overflow: hidden;
-            border-radius: 7px;
             border: 1px solid var(--line);
-            background:
-                linear-gradient(
-                    180deg,
-                    rgba(255,255,255,.03),
-                    rgba(255,0,40,.04)
-                );
+            border-radius: 7px;
+            background: rgba(255,255,255,.02);
         }
 
-        .usa-decor:before {
+        .usa-decor::before {
             content: "★  ★  ★  ★  ★";
             position: absolute;
             top: 9px;
@@ -648,72 +496,77 @@
             letter-spacing: 7px;
         }
 
-        .usa-decor:after {
+        .usa-decor::after {
             content: "USA / 2026";
             position: absolute;
             right: 14px;
             bottom: 10px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 13px;
             color: rgba(255,255,255,.2);
+            font-family: Oswald, sans-serif;
+            font-size: 13px;
             letter-spacing: 2px;
         }
 
         .accessory {
             position: absolute;
-            font-size: 28px;
             opacity: .3;
+            font-size: 28px;
             filter: grayscale(1);
         }
 
         .accessory.one {
-            left: 18%;
             top: 31px;
+            left: 18%;
         }
 
         .accessory.two {
-            left: 45%;
             top: 24px;
+            left: 45%;
         }
 
         .accessory.three {
-            right: 18%;
             top: 34px;
+            right: 18%;
         }
 
         /* NAV */
 
         .bottom-nav {
             position: fixed;
-            z-index: 200;
-            bottom: 0;
             left: 50%;
-            transform: translateX(-50%);
+            bottom: 0;
+            z-index: 200;
             width: min(520px,100%);
             padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
-            background: rgba(7,7,7,.94);
-            backdrop-filter: blur(18px);
-            border-top: 1px solid var(--line);
+            transform: translateX(-50%);
             display: grid;
             grid-template-columns: repeat(3,1fr);
+            border-top: 1px solid var(--line);
+            background: rgba(7,7,7,.94);
+            backdrop-filter: blur(18px);
         }
 
         .nav-button {
-            background: none;
-            border: none;
-            color: #666;
             padding: 9px 4px;
+            border: 0;
+            background: none;
+            color: #666;
             cursor: pointer;
-            font-family: 'Inter',sans-serif;
-            transition: .25s;
+            font-family: Inter, sans-serif;
+        }
+
+        .nav-button.active {
+            color: white;
         }
 
         .nav-icon {
-            font-size: 17px;
             display: block;
             margin-bottom: 5px;
-            filter: grayscale(1);
-            transition: .25s;
+            font-size: 17px;
+        }
+
+        .nav-button.active .nav-icon {
+            color: var(--red);
         }
 
         .nav-label {
@@ -722,32 +575,23 @@
             letter-spacing: 1px;
         }
 
-        .nav-button.active {
-            color: white;
-        }
-
-        .nav-button.active .nav-icon {
-            filter: none;
-            color: var(--red);
-        }
-
         /* TOAST */
 
         .toast {
             position: fixed;
-            z-index: 500;
             left: 50%;
             bottom: 95px;
-            transform: translate(-50%,20px);
-            background: #1d1d1d;
-            border: 1px solid var(--line);
-            color: white;
+            z-index: 500;
             padding: 12px 18px;
+            border: 1px solid var(--line);
             border-radius: 5px;
+            background: #1d1d1d;
+            color: white;
             font-size: 12px;
             font-weight: 700;
             opacity: 0;
             pointer-events: none;
+            transform: translate(-50%,20px);
             transition: .3s;
             white-space: nowrap;
         }
@@ -757,7 +601,7 @@
             transform: translate(-50%,0);
         }
 
-        @media (max-width:380px) {
+        @media (max-width: 380px) {
             h1 {
                 font-size: 39px;
             }
@@ -770,9 +614,8 @@
                 height: 175px;
             }
 
-            .photo-meme,
-            .photo-meme img {
-                min-height: 290px;
+            .photo-meme {
+                height: 290px;
             }
 
             .ai-caption {
@@ -783,8 +626,6 @@
 </head>
 
 <body>
-
-<div class="background-stars"></div>
 
 <div class="app">
 
@@ -819,7 +660,6 @@
         </div>
 
         <div class="stat-grid">
-
             <div class="stat">
                 <div class="stat-number">2026</div>
                 <div class="stat-label">Our year</div>
@@ -839,7 +679,6 @@
                 <div class="stat-number">VIP</div>
                 <div class="stat-label">Community</div>
             </div>
-
         </div>
 
         <div class="section-title">
@@ -863,15 +702,14 @@
             <span>2026 ARCHIVE</span>
         </div>
 
-        <!-- PHOTO MEME -->
-
         <div class="meme">
 
             <div class="meme-image photo-meme">
 
                 <img
-                    src="images.jfif"
+                    src="./images.jfif"
                     alt="VIPERR meme"
+                    onerror="this.style.display='none';"
                 >
 
                 <div class="ai-caption">
@@ -887,21 +725,15 @@
 
         </div>
 
-        <!-- MEME 001 -->
-
         <div class="meme">
 
             <div class="meme-image">
-
                 <div class="meme-placeholder">
-
                     <div class="big">
                         WHEN YOU<br>
                         <span class="red">HEAR VIPERR</span>
                     </div>
-
                 </div>
-
             </div>
 
             <div class="meme-info">
@@ -911,21 +743,15 @@
 
         </div>
 
-        <!-- MEME 002 -->
-
         <div class="meme">
 
             <div class="meme-image">
-
                 <div class="meme-placeholder">
-
                     <div class="big">
                         BRO<br>
                         <span class="red">IT'S 4AM</span>
                     </div>
-
                 </div>
-
             </div>
 
             <div class="meme-info">
@@ -935,21 +761,15 @@
 
         </div>
 
-        <!-- MEME 003 -->
-
         <div class="meme">
 
             <div class="meme-image">
-
                 <div class="meme-placeholder">
-
                     <div class="big">
                         ONE MORE<br>
                         <span class="red">TRACK</span>
                     </div>
-
                 </div>
-
             </div>
 
             <div class="meme-info">
@@ -967,7 +787,7 @@
 
     </main>
 
-    <!-- TRACK -->
+    <!-- TRACKS -->
 
     <main id="track" class="page">
 
@@ -978,170 +798,106 @@
 
         <div class="track-list">
 
-            <!-- 01 -->
-
             <div class="track-card featured">
 
                 <div class="track-cover">
-
                     <div class="track-number">01 / 2026</div>
-
-                    <div class="track-type">
-                        FEATURED
-                    </div>
-
+                    <div class="track-type">FEATURED</div>
                 </div>
 
                 <div class="track-info">
-
-                    <div class="track-artist">
-                        Kai Angel
-                    </div>
-
-                    <div class="track-name">
-                        Limousine Music
-                    </div>
+                    <div class="track-artist">Kai Angel</div>
+                    <div class="track-name">Limousine Music</div>
 
                     <div class="track-meta">
                         VIPERR COMMUNITY 2026 · NOMINEE #01
                     </div>
 
-                    <button
-                        class="track-button"
-                        onclick="vote(this, 'kai')">
+                    <button class="track-button" data-track="kai">
                         ГОЛОСОВАТЬ
                     </button>
 
                     <div class="votes">
                         Голосов: <strong id="votes-kai">0</strong>
                     </div>
-
                 </div>
 
             </div>
 
-            <!-- 02 -->
-
             <div class="track-card">
 
                 <div class="track-cover">
-
                     <div class="track-number">02 / 2026</div>
-
-                    <div class="track-type">
-                        NOMINEE
-                    </div>
-
+                    <div class="track-type">NOMINEE</div>
                 </div>
 
                 <div class="track-info">
-
-                    <div class="track-artist">
-                        9MICE
-                    </div>
-
-                    <div class="track-name">
-                        NO FEAR
-                    </div>
+                    <div class="track-artist">9MICE</div>
+                    <div class="track-name">NO FEAR</div>
 
                     <div class="track-meta">
                         VIPERR COMMUNITY 2026 · NOMINEE #02
                     </div>
 
-                    <button
-                        class="track-button"
-                        onclick="vote(this, '9mice')">
+                    <button class="track-button" data-track="9mice">
                         ГОЛОСОВАТЬ
                     </button>
 
                     <div class="votes">
                         Голосов: <strong id="votes-9mice">0</strong>
                     </div>
-
                 </div>
 
             </div>
 
-            <!-- 03 -->
-
             <div class="track-card">
 
                 <div class="track-cover">
-
                     <div class="track-number">03 / 2026</div>
-
-                    <div class="track-type">
-                        NOMINEE
-                    </div>
-
+                    <div class="track-type">NOMINEE</div>
                 </div>
 
                 <div class="track-info">
-
-                    <div class="track-artist">
-                        madk1d
-                    </div>
-
-                    <div class="track-name">
-                        Тёмный принц
-                    </div>
+                    <div class="track-artist">madk1d</div>
+                    <div class="track-name">Тёмный принц</div>
 
                     <div class="track-meta">
                         VIPERR COMMUNITY 2026 · NOMINEE #03
                     </div>
 
-                    <button
-                        class="track-button"
-                        onclick="vote(this, 'madk1d')">
+                    <button class="track-button" data-track="madk1d">
                         ГОЛОСОВАТЬ
                     </button>
 
                     <div class="votes">
                         Голосов: <strong id="votes-madk1d">0</strong>
                     </div>
-
                 </div>
 
             </div>
 
-            <!-- 04 -->
-
             <div class="track-card">
 
                 <div class="track-cover">
-
                     <div class="track-number">04 / 2026</div>
-
-                    <div class="track-type">
-                        NOMINEE
-                    </div>
-
+                    <div class="track-type">NOMINEE</div>
                 </div>
 
                 <div class="track-info">
-
-                    <div class="track-artist">
-                        ЕГОР КРИД
-                    </div>
-
-                    <div class="track-name">
-                        Jealous
-                    </div>
+                    <div class="track-artist">ЕГОР КРИД</div>
+                    <div class="track-name">Jealous</div>
 
                     <div class="track-meta">
                         VIPERR COMMUNITY 2026 · NOMINEE #04
                     </div>
 
-                    <button
-                        class="track-button"
-                        onclick="vote(this, 'jealous')">
+                    <button class="track-button" data-track="jealous">
                         ГОЛОСОВАТЬ
                     </button>
 
                     <div class="votes">
                         Голосов: <strong id="votes-jealous">0</strong>
                     </div>
-
                 </div>
 
             </div>
@@ -1149,11 +905,9 @@
         </div>
 
         <div class="usa-decor">
-
             <span class="accessory one">✦</span>
             <span class="accessory two">★</span>
             <span class="accessory three">✧</span>
-
         </div>
 
     </main>
@@ -1164,83 +918,75 @@
 
 <nav class="bottom-nav">
 
-    <button
-        class="nav-button active"
-        onclick="openPage('home', this)">
-
+    <button class="nav-button active" data-page="home">
         <span class="nav-icon">⌂</span>
         <span class="nav-label">ГЛАВНАЯ</span>
-
     </button>
 
-    <button
-        class="nav-button"
-        onclick="openPage('memes', this)">
-
+    <button class="nav-button" data-page="memes">
         <span class="nav-icon">✦</span>
         <span class="nav-label">МЕМЫ</span>
-
     </button>
 
-    <button
-        class="nav-button"
-        onclick="openPage('track', this)">
-
+    <button class="nav-button" data-page="track">
         <span class="nav-icon">♫</span>
         <span class="nav-label">ТРЕКИ</span>
-
     </button>
 
 </nav>
 
-<div id="toast" class="toast">
-    Голос принят
-</div>
+<div id="toast" class="toast">Голос принят</div>
 
 <script>
+    "use strict";
 
     /* TELEGRAM */
 
-    const tg = window.Telegram?.WebApp;
+    const tg = window.Telegram?.WebApp || null;
 
     if (tg) {
-
         tg.ready();
         tg.expand();
 
         try {
             tg.setHeaderColor("#070707");
             tg.setBackgroundColor("#070707");
-        } catch (e) {}
-
+        } catch (error) {
+            console.log("Telegram WebApp settings unavailable");
+        }
     }
-
 
     /* NAVIGATION */
 
-    function openPage(pageId, button) {
+    const pages = document.querySelectorAll(".page");
+    const navButtons = document.querySelectorAll(".nav-button");
 
-        document.querySelectorAll(".page").forEach(page => {
-            page.classList.remove("active");
+    function openPage(pageId) {
+        pages.forEach(page => {
+            page.classList.toggle(
+                "active",
+                page.id === pageId
+            );
         });
 
-        document.querySelectorAll(".nav-button").forEach(btn => {
-            btn.classList.remove("active");
+        navButtons.forEach(button => {
+            button.classList.toggle(
+                "active",
+                button.dataset.page === pageId
+            );
         });
-
-        document.getElementById(pageId).classList.add("active");
-
-        if (button) {
-            button.classList.add("active");
-        }
 
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
-
     }
 
+    navButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            openPage(button.dataset.page);
+        });
+    });
 
     /* VOTING */
 
@@ -1251,88 +997,108 @@
         "jealous"
     ];
 
-    tracks.forEach(track => {
+    function updateVoteButton(track) {
+        const button = document.querySelector(
+            `.track-button[data-track="${track}"]`
+        );
 
-        const saved =
-            Number(localStorage.getItem("viperr_vote_" + track) || 0);
+        if (!button) return;
 
-        const counter =
-            document.getElementById("votes-" + track);
+        const voted =
+            localStorage.getItem(
+                `viperr_voted_${track}`
+            ) === "true";
 
-        if (counter) {
-            counter.textContent = saved;
+        if (voted) {
+            button.textContent = "✓ ГОЛОС ПРИНЯТ";
+            button.classList.add("voted");
         }
+    }
 
-    });
+    function updateVoteCounter(track) {
+        const counter = document.getElementById(
+            `votes-${track}`
+        );
 
+        if (!counter) return;
 
-    function vote(button, track) {
+        const votes = Number(
+            localStorage.getItem(
+                `viperr_vote_${track}`
+            ) || 0
+        );
 
-        const alreadyVoted =
-            localStorage.getItem("viperr_voted_" + track) === "true";
+        counter.textContent = votes;
+    }
 
-        if (alreadyVoted) {
+    function vote(track) {
+        const voted =
+            localStorage.getItem(
+                `viperr_voted_${track}`
+            ) === "true";
 
+        if (voted) {
             showToast("Вы уже голосовали за этот трек");
             return;
-
         }
 
-        let votes =
-            Number(localStorage.getItem("viperr_vote_" + track) || 0);
-
-        votes++;
-
-        localStorage.setItem(
-            "viperr_vote_" + track,
-            votes
+        const currentVotes = Number(
+            localStorage.getItem(
+                `viperr_vote_${track}`
+            ) || 0
         );
 
         localStorage.setItem(
-            "viperr_voted_" + track,
+            `viperr_vote_${track}`,
+            String(currentVotes + 1)
+        );
+
+        localStorage.setItem(
+            `viperr_voted_${track}`,
             "true"
         );
 
-        const counter =
-            document.getElementById("votes-" + track);
-
-        if (counter) {
-            counter.textContent = votes;
-        }
-
-        button.textContent = "✓ ГОЛОС ПРИНЯТ";
-        button.classList.add("voted");
+        updateVoteCounter(track);
+        updateVoteButton(track);
 
         showToast("Голос принят");
 
-        if (tg && tg.HapticFeedback) {
-
-            tg.HapticFeedback.impactOccurred("medium");
-
+        if (tg?.HapticFeedback) {
+            try {
+                tg.HapticFeedback.impactOccurred("medium");
+            } catch (error) {}
         }
-
     }
 
+    document.querySelectorAll(".track-button").forEach(button => {
+        button.addEventListener("click", () => {
+            vote(button.dataset.track);
+        });
+    });
+
+    tracks.forEach(track => {
+        updateVoteCounter(track);
+        updateVoteButton(track);
+    });
 
     /* TOAST */
 
-    function showToast(text) {
+    let toastTimer;
 
-        const toast =
-            document.getElementById("toast");
+    function showToast(text) {
+        const toast = document.getElementById("toast");
+
+        if (!toast) return;
 
         toast.textContent = text;
-
         toast.classList.add("show");
 
-        setTimeout(() => {
+        clearTimeout(toastTimer);
 
+        toastTimer = setTimeout(() => {
             toast.classList.remove("show");
-
         }, 2200);
-
     }
-
 </script>
 
 </body>
