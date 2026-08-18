@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -19,9 +18,12 @@
 
         :root {
             --bg: #050505;
+            --bg2: #0b0b0b;
             --card: #111111;
+            --card2: #171717;
             --red: #ff1738;
-            --white: #f4f4f4;
+            --red2: #ff3652;
+            --white: #f5f5f5;
             --gray: #858585;
             --line: rgba(255,255,255,.08);
         }
@@ -35,11 +37,23 @@
             min-height: 100vh;
             overflow-x: hidden;
             background:
-                radial-gradient(circle at 50% -10%, rgba(255,0,45,.22), transparent 32%),
-                radial-gradient(circle at 0% 55%, rgba(255,0,30,.055), transparent 25%),
-                linear-gradient(180deg, #090909 0%, #030303 100%);
+                radial-gradient(
+                    circle at 50% -15%,
+                    rgba(255,0,45,.24),
+                    transparent 34%
+                ),
+                radial-gradient(
+                    circle at 0% 55%,
+                    rgba(255,0,30,.06),
+                    transparent 27%
+                ),
+                linear-gradient(
+                    180deg,
+                    #090909 0%,
+                    #030303 100%
+                );
             color: var(--white);
-            font-family: Inter, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body::before {
@@ -47,38 +61,109 @@
             position: fixed;
             inset: 0;
             pointer-events: none;
-            opacity: .045;
             z-index: 100;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255,255,255,.3) 0 1px,
-                transparent 1px 4px
-            );
+            opacity: .035;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255,255,255,.35) 0px,
+                    rgba(255,255,255,.35) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+        }
+
+        body::after {
+            content: "USA";
+            position: fixed;
+            right: -55px;
+            top: 38%;
+            z-index: 0;
+            pointer-events: none;
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 120px;
+            font-weight: 700;
+            letter-spacing: -7px;
+
+            color: rgba(255,255,255,.018);
+
+            transform: rotate(90deg);
         }
 
         .app {
+            position: relative;
+            z-index: 1;
+
             width: 100%;
             max-width: 520px;
             min-height: 100vh;
+
             margin: 0 auto;
             padding-bottom: 105px;
-            position: relative;
-            z-index: 1;
         }
 
-        /* HEADER */
+        /* =========================
+           DECORATION
+        ========================= */
+
+        .stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            color: rgba(255,23,56,.25);
+            font-size: 20px;
+        }
+
+        .star.one {
+            left: 7px;
+            top: 17%;
+            transform: rotate(-20deg);
+        }
+
+        .star.two {
+            right: 12px;
+            top: 27%;
+            transform: rotate(15deg);
+        }
+
+        .star.three {
+            left: 14px;
+            bottom: 29%;
+            transform: rotate(10deg);
+        }
+
+        .star.four {
+            right: 8px;
+            bottom: 18%;
+            transform: rotate(-15deg);
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
 
         header {
-            padding: 28px 20px 18px;
+            position: relative;
+            z-index: 3;
+
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+
+            padding: 27px 20px 18px;
         }
 
         .logo {
-            font-family: Oswald, sans-serif;
+            font-family: 'Oswald', sans-serif;
+            font-size: 28px;
             font-weight: 700;
-            font-size: 27px;
             letter-spacing: -1px;
         }
 
@@ -88,21 +173,28 @@
 
         .year {
             padding: 7px 10px;
+
             border: 1px solid var(--line);
-            border-radius: 3px;
-            background: rgba(0,0,0,.25);
+            border-radius: 4px;
+
+            background: rgba(0,0,0,.3);
+
             color: var(--gray);
-            font-size: 11px;
-            font-weight: 800;
+
+            font-size: 10px;
+            font-weight: 900;
             letter-spacing: 2px;
         }
 
-        /* PAGES */
+        /* =========================
+           PAGES
+        ========================= */
 
         .page {
             display: none;
             padding: 0 18px;
-            animation: pageIn .3s ease;
+
+            animation: pageIn .4s cubic-bezier(.2,.8,.2,1);
         }
 
         .page.active {
@@ -110,6 +202,349 @@
         }
 
         @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+
+            min-height: 365px;
+
+            display: flex;
+            align-items: flex-end;
+
+            padding: 25px;
+
+            border: 1px solid var(--line);
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    transparent 5%,
+                    rgba(0,0,0,.95) 100%
+                ),
+                radial-gradient(
+                    circle at 70% 25%,
+                    rgba(255,15,50,.4),
+                    transparent 27%
+                ),
+                linear-gradient(
+                    135deg,
+                    #191919,
+                    #050505 70%
+                );
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.45);
+        }
+
+        .hero::before {
+            content: "★ ★ ★   USA   ★ ★ ★";
+
+            position: absolute;
+            top: 23px;
+            right: -25px;
+
+            color: rgba(255,255,255,.045);
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 17px;
+            letter-spacing: 3px;
+
+            transform: rotate(90deg);
+        }
+
+        .hero::after {
+            content: "VIPERR";
+
+            position: absolute;
+            right: -32px;
+            bottom: 30px;
+
+            color: rgba(255,255,255,.035);
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 82px;
+            font-weight: 700;
+
+            transform: rotate(-90deg);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            margin-bottom: 10px;
+
+            color: var(--red);
+
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 3px;
+        }
+
+        h1 {
+            margin: 0;
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 48px;
+            line-height: .92;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        h1 span {
+            color: var(--red);
+        }
+
+        .hero-description {
+            max-width: 310px;
+
+            margin: 17px 0 0;
+
+            color: #aaa;
+
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        /* =========================
+           TITLES
+        ========================= */
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin: 28px 2px 13px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+
+            text-transform: uppercase;
+        }
+
+        .section-title span {
+            color: var(--gray);
+
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat {
+            padding: 19px;
+
+            border: 1px solid var(--line);
+            border-radius: 7px;
+
+            background: rgba(17,17,17,.92);
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease;
+        }
+
+        .stat:active {
+            transform: scale(.98);
+        }
+
+        .stat-number {
+            font-family: 'Oswald', sans-serif;
+            font-size: 31px;
+        }
+
+        .stat-label {
+            margin-top: 4px;
+
+            color: var(--gray);
+
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           QUOTE
+        ========================= */
+
+        .quote {
+            padding: 20px;
+
+            border-left: 3px solid var(--red);
+
+            background: #0e0e0e;
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            line-height: 1.15;
+
+            text-transform: uppercase;
+
+            box-shadow: 0 12px 40px rgba(0,0,0,.25);
+        }
+
+        /* =========================
+           USA DECOR
+        ========================= */
+
+        .usa-block {
+            position: relative;
+            overflow: hidden;
+
+            height: 120px;
+
+            margin-top: 15px;
+
+            border: 1px solid var(--line);
+            border-radius: 8px;
+
+            background:
+                repeating-linear-gradient(
+                    180deg,
+                    rgba(255,255,255,.025) 0px,
+                    rgba(255,255,255,.025) 9px,
+                    rgba(255,0,40,.025) 9px,
+                    rgba(255,0,40,.025) 18px
+                ),
+                #0b0b0b;
+        }
+
+        .usa-block::before {
+            content: "★ ★ ★ ★ ★ ★ ★";
+
+            position: absolute;
+            top: 10px;
+            left: 15px;
+
+            color: rgba(255,23,56,.35);
+
+            font-size: 11px;
+            letter-spacing: 6px;
+        }
+
+        .usa-block::after {
+            content: "USA / 2026";
+
+            position: absolute;
+            right: 15px;
+            bottom: 11px;
+
+            color: rgba(255,255,255,.25);
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .decor-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+
+            transform: translate(-50%,-50%);
+
+            white-space: nowrap;
+
+            color: rgba(255,255,255,.12);
+
+            font-family: 'Oswald', sans-serif;
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        /* =========================
+           VOTING
+        ========================= */
+
+        .vote-tabs {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 8px;
+
+            margin-bottom: 15px;
+        }
+
+        .vote-tab {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+
+            padding: 13px 5px;
+
+            background: #101010;
+
+            color: #777;
+
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            transition:
+                background .25s ease,
+                color .25s ease,
+                border-color .25s ease,
+                transform .2s ease;
+        }
+
+        .vote-tab:active {
+            transform: scale(.96);
+        }
+
+        .vote-tab.active {
+            color: white;
+
+            border-color: rgba(255,23,56,.45);
+
+            background: var(--red);
+        }
+
+        .vote-section {
+            display: none;
+
+            animation: voteIn .35s ease;
+        }
+
+        .vote-section.active {
+            display: block;
+        }
+
+        @keyframes voteIn {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -121,452 +556,162 @@
             }
         }
 
-        /* HERO */
-
-        .hero {
-            min-height: 330px;
-            padding: 24px;
-            display: flex;
-            align-items: flex-end;
+        .vote-card {
             position: relative;
-            overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: 9px;
-            background:
-                linear-gradient(180deg, transparent 5%, rgba(0,0,0,.94) 100%),
-                radial-gradient(circle at 70% 25%, rgba(255,15,50,.42), transparent 25%),
-                linear-gradient(135deg,#191919,#050505 65%);
-            box-shadow: 0 20px 80px rgba(0,0,0,.35);
-        }
 
-        .hero::after {
-            content: "VIPERR";
-            position: absolute;
-            top: 35px;
-            right: -20px;
-            color: rgba(255,255,255,.035);
-            font-family: Oswald, sans-serif;
-            font-size: 78px;
-            font-weight: 700;
-            transform: rotate(-90deg);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .eyebrow {
-            margin-bottom: 9px;
-            color: var(--red);
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 3px;
-        }
-
-        h1 {
-            margin: 0;
-            font-family: Oswald, sans-serif;
-            font-size: 45px;
-            line-height: .94;
-            text-transform: uppercase;
-        }
-
-        h1 span {
-            color: var(--red);
-        }
-
-        .hero-description {
-            max-width: 310px;
-            margin: 16px 0 0;
-            color: #aaa;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        /* TITLES */
-
-        .section-title {
-            margin: 28px 2px 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title h2 {
-            margin: 0;
-            font-family: Oswald, sans-serif;
-            font-size: 23px;
-            text-transform: uppercase;
-        }
-
-        .section-title span {
-            color: var(--gray);
-            font-size: 10px;
-            letter-spacing: 1.5px;
-        }
-
-        /* STATS */
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .stat {
-            padding: 19px;
-            border: 1px solid var(--line);
-            border-radius: 6px;
-            background: rgba(17,17,17,.9);
-        }
-
-        .stat-number {
-            font-family: Oswald, sans-serif;
-            font-size: 31px;
-        }
-
-        .stat-label {
-            margin-top: 4px;
-            color: var(--gray);
-            font-size: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .quote {
-            margin-top: 10px;
+            margin-bottom: 11px;
             padding: 18px;
-            border-left: 3px solid var(--red);
-            background: #0e0e0e;
-            font-family: Oswald, sans-serif;
-            font-size: 18px;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
 
-        /* MEMES */
-
-        .meme {
-            margin-bottom: 15px;
-            overflow: hidden;
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: var(--card);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #171717,
+                    #090909
+                );
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease;
         }
 
-        .meme-image {
-            height: 220px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg,#181818,#050505);
+        .vote-card:active {
+            transform: scale(.985);
         }
 
-        .photo-meme {
-            height: 330px;
+        .vote-card.featured {
+            border-color: rgba(255,23,56,.35);
         }
 
-        .photo-meme img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            filter: saturate(.85) contrast(1.05);
-        }
-
-        .photo-meme::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background: linear-gradient(
-                180deg,
-                transparent 35%,
-                rgba(0,0,0,.1) 50%,
-                rgba(0,0,0,.9) 100%
-            );
-        }
-
-        .ai-caption {
-            position: absolute;
-            left: 18px;
-            right: 18px;
-            bottom: 18px;
-            z-index: 2;
-            color: white;
-            font-family: Oswald, sans-serif;
-            font-size: 42px;
-            line-height: .9;
-            text-align: center;
-            text-transform: uppercase;
-            text-shadow: 0 3px 0 #000, 0 0 20px rgba(0,0,0,.8);
-        }
-
-        .ai-caption span {
+        .vote-number {
             color: var(--red);
-        }
 
-        .meme-placeholder {
-            position: relative;
-            z-index: 2;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .meme-placeholder .big {
-            font-family: Oswald, sans-serif;
-            font-size: 32px;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
-        .red {
-            color: var(--red);
-        }
-
-        .meme-info {
-            padding: 13px 15px;
-            display: flex;
-            justify-content: space-between;
-            color: #999;
-            font-size: 11px;
-        }
-
-        .meme-info strong {
-            color: white;
-        }
-
-        /* TRACKS */
-
-        .track-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .track-card {
-            overflow: hidden;
-            border: 1px solid rgba(255,23,56,.2);
-            border-radius: 8px;
-            background: linear-gradient(145deg,#181818,#080808);
-        }
-
-        .track-card.featured {
-            border-color: rgba(255,23,56,.45);
-        }
-
-        .track-cover {
-            height: 190px;
-            position: relative;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at 70% 35%,rgba(255,20,55,.55),transparent 22%),
-                radial-gradient(circle at 35% 70%,rgba(110,0,20,.5),transparent 30%),
-                linear-gradient(135deg,#242424,#050505 60%);
-        }
-
-        .track-card:nth-child(2) .track-cover {
-            background:
-                radial-gradient(circle at 30% 35%,rgba(255,255,255,.1),transparent 20%),
-                radial-gradient(circle at 75% 70%,rgba(255,0,45,.45),transparent 28%),
-                linear-gradient(135deg,#161616,#050505);
-        }
-
-        .track-card:nth-child(3) .track-cover {
-            background:
-                radial-gradient(circle at 65% 30%,rgba(130,0,255,.3),transparent 25%),
-                radial-gradient(circle at 30% 75%,rgba(255,0,40,.35),transparent 30%),
-                linear-gradient(135deg,#181818,#040404);
-        }
-
-        .track-card:nth-child(4) .track-cover {
-            background:
-                radial-gradient(circle at 70% 30%,rgba(0,90,255,.22),transparent 25%),
-                radial-gradient(circle at 30% 70%,rgba(255,0,45,.42),transparent 30%),
-                linear-gradient(135deg,#171717,#030303);
-        }
-
-        .track-number {
-            position: absolute;
-            top: 17px;
-            left: 18px;
-            z-index: 2;
-            color: var(--red);
-            font-family: Oswald, sans-serif;
-            font-size: 13px;
+            font-size: 9px;
+            font-weight: 900;
             letter-spacing: 2px;
         }
 
-        .track-type {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 2;
-            padding: 6px 8px;
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 3px;
-            color: rgba(255,255,255,.55);
-            background: rgba(0,0,0,.2);
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-        }
+        .vote-title {
+            margin-top: 7px;
 
-        .track-info {
-            padding: 18px;
-        }
+            font-family: 'Oswald', sans-serif;
+            font-size: 27px;
+            line-height: 1.05;
 
-        .track-artist {
-            color: var(--red);
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 1.8px;
             text-transform: uppercase;
         }
 
-        .track-name {
-            margin-top: 5px;
-            font-family: Oswald, sans-serif;
-            font-size: 31px;
-            line-height: 1;
-            text-transform: uppercase;
-        }
+        .vote-subtitle {
+            margin-top: 8px;
 
-        .track-meta {
-            margin-top: 9px;
             color: var(--gray);
+
             font-size: 10px;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
-        .track-button {
+        .vote-button {
             width: 100%;
+
             margin-top: 15px;
             padding: 13px;
+
             border: 1px solid rgba(255,255,255,.1);
-            border-radius: 4px;
+            border-radius: 5px;
+
             background: #151515;
             color: white;
-            cursor: pointer;
+
             font-size: 10px;
             font-weight: 900;
-            letter-spacing: 1.7px;
-            text-transform: uppercase;
+            letter-spacing: 1.5px;
+
+            cursor: pointer;
+
+            transition:
+                background .25s ease,
+                border-color .25s ease,
+                transform .15s ease;
         }
 
-        .track-button.voted {
-            border-color: var(--red);
+        .vote-button:active {
+            transform: scale(.98);
+        }
+
+        .vote-button:hover,
+        .vote-button.voted {
             background: var(--red);
+            border-color: var(--red);
         }
 
-        .votes {
-            margin-top: 10px;
+        .vote-count {
+            margin-top: 9px;
+
             color: #666;
-            font-size: 10px;
+
             text-align: center;
+
+            font-size: 9px;
         }
 
-        .votes strong {
+        .vote-count strong {
             color: white;
         }
 
-        /* DECOR */
-
-        .usa-decor {
-            height: 95px;
-            margin: 20px 0 5px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: 7px;
-            background: rgba(255,255,255,.02);
-        }
-
-        .usa-decor::before {
-            content: "★  ★  ★  ★  ★";
-            position: absolute;
-            top: 9px;
-            left: 12px;
-            color: rgba(255,23,56,.25);
-            font-size: 11px;
-            letter-spacing: 7px;
-        }
-
-        .usa-decor::after {
-            content: "USA / 2026";
-            position: absolute;
-            right: 14px;
-            bottom: 10px;
-            color: rgba(255,255,255,.2);
-            font-family: Oswald, sans-serif;
-            font-size: 13px;
-            letter-spacing: 2px;
-        }
-
-        .accessory {
-            position: absolute;
-            opacity: .3;
-            font-size: 28px;
-            filter: grayscale(1);
-        }
-
-        .accessory.one {
-            top: 31px;
-            left: 18%;
-        }
-
-        .accessory.two {
-            top: 24px;
-            left: 45%;
-        }
-
-        .accessory.three {
-            top: 34px;
-            right: 18%;
-        }
-
-        /* NAV */
+        /* =========================
+           BOTTOM NAV
+        ========================= */
 
         .bottom-nav {
             position: fixed;
+            z-index: 200;
+
             left: 50%;
             bottom: 0;
-            z-index: 200;
-            width: min(520px,100%);
-            padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
+
             transform: translateX(-50%);
+
+            width: min(520px,100%);
+
             display: grid;
-            grid-template-columns: repeat(3,1fr);
+            grid-template-columns: 1fr 1fr;
+
+            padding:
+                9px 12px
+                calc(9px + env(safe-area-inset-bottom));
+
             border-top: 1px solid var(--line);
+
             background: rgba(7,7,7,.94);
+
             backdrop-filter: blur(18px);
         }
 
         .nav-button {
-            padding: 9px 4px;
-            border: 0;
+            border: none;
             background: none;
-            color: #666;
-            cursor: pointer;
-            font-family: Inter, sans-serif;
-        }
 
-        .nav-button.active {
-            color: white;
+            padding: 9px 4px;
+
+            color: #666;
+
+            font-family: 'Inter', sans-serif;
+
+            cursor: pointer;
+
+            transition: color .25s ease;
         }
 
         .nav-icon {
             display: block;
-            margin-bottom: 5px;
-            font-size: 17px;
-        }
 
-        .nav-button.active .nav-icon {
-            color: var(--red);
+            margin-bottom: 5px;
+
+            font-size: 18px;
+
+            transition: transform .25s ease;
         }
 
         .nav-label {
@@ -575,25 +720,45 @@
             letter-spacing: 1px;
         }
 
-        /* TOAST */
+        .nav-button.active {
+            color: white;
+        }
+
+        .nav-button.active .nav-icon {
+            color: var(--red);
+            transform: translateY(-2px);
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
 
         .toast {
             position: fixed;
+            z-index: 500;
+
             left: 50%;
             bottom: 95px;
-            z-index: 500;
+
+            transform: translate(-50%,20px);
+
             padding: 12px 18px;
+
             border: 1px solid var(--line);
             border-radius: 5px;
-            background: #1d1d1d;
+
+            background: #1c1c1c;
             color: white;
-            font-size: 12px;
+
+            font-size: 11px;
             font-weight: 700;
+
             opacity: 0;
             pointer-events: none;
-            transform: translate(-50%,20px);
-            transition: .3s;
-            white-space: nowrap;
+
+            transition:
+                opacity .3s ease,
+                transform .3s ease;
         }
 
         .toast.show {
@@ -601,46 +766,72 @@
             transform: translate(-50%,0);
         }
 
-        @media (max-width: 380px) {
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width:380px) {
+
             h1 {
-                font-size: 39px;
+                font-size: 40px;
             }
 
             .hero {
-                min-height: 300px;
+                min-height: 320px;
             }
 
-            .track-cover {
-                height: 175px;
+            .vote-title {
+                font-size: 24px;
             }
 
-            .photo-meme {
-                height: 290px;
-            }
-
-            .ai-caption {
-                font-size: 35px;
-            }
         }
     </style>
 </head>
 
 <body>
 
+<div class="stars">
+    <span class="star one">✦</span>
+    <span class="star two">★</span>
+    <span class="star three">✧</span>
+    <span class="star four">✦</span>
+</div>
+
 <div class="app">
 
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <header>
-        <div class="logo">V<span>I</span>PERR</div>
-        <div class="year">20 / 26</div>
+
+        <div class="logo">
+            V<span>I</span>PERR
+        </div>
+
+        <div class="year">
+            20 / 26
+        </div>
+
     </header>
 
-    <!-- HOME -->
 
-    <main id="home" class="page active">
+    <!-- =========================
+         ГЛАВНАЯ
+    ========================== -->
+
+    <main
+        id="home"
+        class="page active"
+    >
 
         <section class="hero">
+
             <div class="hero-content">
-                <div class="eyebrow">THE COMMUNITY ARCHIVE</div>
+
+                <div class="eyebrow">
+                    THE COMMUNITY ARCHIVE
+                </div>
 
                 <h1>
                     VIPERR<br>
@@ -648,42 +839,93 @@
                 </h1>
 
                 <p class="hero-description">
-                    Год, который останется внутри комьюнити.
-                    Музыка, мемы, моменты и главный саунд года.
+                    Главный архив комьюнити.
+                    Музыка, мемы, события и моменты,
+                    которые останутся с нами.
                 </p>
+
             </div>
+
         </section>
 
+
         <div class="section-title">
-            <h2>Этот год</h2>
-            <span>COMMUNITY</span>
+
+            <h2>
+                Этот год
+            </h2>
+
+            <span>
+                COMMUNITY
+            </span>
+
         </div>
+
 
         <div class="stat-grid">
-            <div class="stat">
-                <div class="stat-number">2026</div>
-                <div class="stat-label">Our year</div>
-            </div>
 
             <div class="stat">
-                <div class="stat-number">04</div>
-                <div class="stat-label">Tracks</div>
+
+                <div class="stat-number">
+                    2026
+                </div>
+
+                <div class="stat-label">
+                    Наш год
+                </div>
+
             </div>
 
-            <div class="stat">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Memories</div>
-            </div>
 
             <div class="stat">
-                <div class="stat-number">VIP</div>
-                <div class="stat-label">Community</div>
+
+                <div class="stat-number">
+                    03
+                </div>
+
+                <div class="stat-label">
+                    Номинации
+                </div>
+
             </div>
+
+
+            <div class="stat">
+
+                <div class="stat-number">
+                    ∞
+                </div>
+
+                <div class="stat-label">
+                    Воспоминаний
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-number">
+                    VIP
+                </div>
+
+                <div class="stat-label">
+                    Комьюнити
+                </div>
+
+            </div>
+
         </div>
+
 
         <div class="section-title">
-            <h2>2026</h2>
+
+            <h2>
+                2026
+            </h2>
+
         </div>
+
 
         <div class="quote">
             NO LOVE.<br>
@@ -691,414 +933,602 @@
             JUST VIPERR.
         </div>
 
-    </main>
 
-    <!-- MEMES -->
+        <div class="usa-block">
 
-    <main id="memes" class="page">
+            <div class="decor-text">
+                ★ VIPERR ★ USA ★
+            </div>
 
-        <div class="section-title">
-            <h2>Мемы</h2>
-            <span>2026 ARCHIVE</span>
         </div>
 
-        <div class="meme">
+    </main>
 
-            <div class="meme-image photo-meme">
 
-                <img
-                    src="./images.jfif"
-                    alt="VIPERR meme"
-                    onerror="this.style.display='none';"
+    <!-- =========================
+         ГОЛОСОВАНИЯ
+    ========================== -->
+
+    <main
+        id="voting"
+        class="page"
+    >
+
+        <div class="section-title">
+
+            <h2>
+                Голосования
+            </h2>
+
+            <span>
+                2026
+            </span>
+
+        </div>
+
+
+        <!-- КНОПКИ КАТЕГОРИЙ -->
+
+        <div class="vote-tabs">
+
+            <button
+                class="vote-tab active"
+                onclick="openVoteCategory('memes', this)"
+            >
+                МЕМЫ
+            </button>
+
+            <button
+                class="vote-tab"
+                onclick="openVoteCategory('tracks', this)"
+            >
+                ТРЕК
+            </button>
+
+            <button
+                class="vote-tab"
+                onclick="openVoteCategory('events', this)"
+            >
+                СОБЫТИЕ
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             МЕМ
+        ========================== -->
+
+        <section
+            id="memes"
+            class="vote-section active"
+        >
+
+            <div class="vote-card featured">
+
+                <div class="vote-number">
+                    МЕМ ГОДА
+                </div>
+
+                <div class="vote-title">
+                    9MICE — ЭТО ЭЙАЙ
+                </div>
+
+                <div class="vote-subtitle">
+                    Главный мем года по версии
+                    VIPERR COMMUNITY.
+                </div>
+
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'meme_9mice')"
                 >
+                    ГОЛОСОВАТЬ
+                </button>
 
-                <div class="ai-caption">
-                    ЭТО <span>ЭЙАЙ</span>
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-meme_9mice">
+                        0
+                    </strong>
                 </div>
 
             </div>
 
-            <div class="meme-info">
-                <strong>VIPERR MOMENT #000</strong>
-                <span>2026</span>
-            </div>
+        </section>
 
-        </div>
 
-        <div class="meme">
+        <!-- =========================
+             ТРЕКИ
+        ========================== -->
 
-            <div class="meme-image">
-                <div class="meme-placeholder">
-                    <div class="big">
-                        WHEN YOU<br>
-                        <span class="red">HEAR VIPERR</span>
-                    </div>
-                </div>
-            </div>
+        <section
+            id="tracks"
+            class="vote-section"
+        >
 
-            <div class="meme-info">
-                <strong>VIPERR MOMENT #001</strong>
-                <span>2026</span>
-            </div>
+            <div class="vote-card">
 
-        </div>
-
-        <div class="meme">
-
-            <div class="meme-image">
-                <div class="meme-placeholder">
-                    <div class="big">
-                        BRO<br>
-                        <span class="red">IT'S 4AM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="meme-info">
-                <strong>VIPERR MOMENT #002</strong>
-                <span>2026</span>
-            </div>
-
-        </div>
-
-        <div class="meme">
-
-            <div class="meme-image">
-                <div class="meme-placeholder">
-                    <div class="big">
-                        ONE MORE<br>
-                        <span class="red">TRACK</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="meme-info">
-                <strong>VIPERR MOMENT #003</strong>
-                <span>2026</span>
-            </div>
-
-        </div>
-
-        <div class="usa-decor">
-            <span class="accessory one">✦</span>
-            <span class="accessory two">★</span>
-            <span class="accessory three">✧</span>
-        </div>
-
-    </main>
-
-    <!-- TRACKS -->
-
-    <main id="track" class="page">
-
-        <div class="section-title">
-            <h2>Треки</h2>
-            <span>2026</span>
-        </div>
-
-        <div class="track-list">
-
-            <div class="track-card featured">
-
-                <div class="track-cover">
-                    <div class="track-number">01 / 2026</div>
-                    <div class="track-type">FEATURED</div>
+                <div class="vote-number">
+                    ТРЕК №01
                 </div>
 
-                <div class="track-info">
-                    <div class="track-artist">Kai Angel</div>
-                    <div class="track-name">Limousine Music</div>
+                <div class="vote-title">
+                    9MICE — NO FEAR
+                </div>
 
-                    <div class="track-meta">
-                        VIPERR COMMUNITY 2026 · NOMINEE #01
-                    </div>
+                <div class="vote-subtitle">
+                    Кандидат на главный трек года.
+                </div>
 
-                    <button class="track-button" data-track="kai">
-                        ГОЛОСОВАТЬ
-                    </button>
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'track_nofear')"
+                >
+                    ГОЛОСОВАТЬ
+                </button>
 
-                    <div class="votes">
-                        Голосов: <strong id="votes-kai">0</strong>
-                    </div>
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-track_nofear">
+                        0
+                    </strong>
                 </div>
 
             </div>
 
-            <div class="track-card">
 
-                <div class="track-cover">
-                    <div class="track-number">02 / 2026</div>
-                    <div class="track-type">NOMINEE</div>
+            <div class="vote-card">
+
+                <div class="vote-number">
+                    ТРЕК №02
                 </div>
 
-                <div class="track-info">
-                    <div class="track-artist">9MICE</div>
-                    <div class="track-name">NO FEAR</div>
-
-                    <div class="track-meta">
-                        VIPERR COMMUNITY 2026 · NOMINEE #02
-                    </div>
-
-                    <button class="track-button" data-track="9mice">
-                        ГОЛОСОВАТЬ
-                    </button>
-
-                    <div class="votes">
-                        Голосов: <strong id="votes-9mice">0</strong>
-                    </div>
+                <div class="vote-title">
+                    KAI ANGEL — LIMOUSINE MUSIC
                 </div>
 
-            </div>
-
-            <div class="track-card">
-
-                <div class="track-cover">
-                    <div class="track-number">03 / 2026</div>
-                    <div class="track-type">NOMINEE</div>
+                <div class="vote-subtitle">
+                    Кандидат на главный трек года.
                 </div>
 
-                <div class="track-info">
-                    <div class="track-artist">madk1d</div>
-                    <div class="track-name">Тёмный принц</div>
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'track_limousine')"
+                >
+                    ГОЛОСОВАТЬ
+                </button>
 
-                    <div class="track-meta">
-                        VIPERR COMMUNITY 2026 · NOMINEE #03
-                    </div>
-
-                    <button class="track-button" data-track="madk1d">
-                        ГОЛОСОВАТЬ
-                    </button>
-
-                    <div class="votes">
-                        Голосов: <strong id="votes-madk1d">0</strong>
-                    </div>
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-track_limousine">
+                        0
+                    </strong>
                 </div>
 
             </div>
 
-            <div class="track-card">
 
-                <div class="track-cover">
-                    <div class="track-number">04 / 2026</div>
-                    <div class="track-type">NOMINEE</div>
+            <div class="vote-card">
+
+                <div class="vote-number">
+                    ТРЕК №03
                 </div>
 
-                <div class="track-info">
-                    <div class="track-artist">ЕГОР КРИД</div>
-                    <div class="track-name">Jealous</div>
+                <div class="vote-title">
+                    9MICE, К — НЕТ ТЕБЯ
+                </div>
 
-                    <div class="track-meta">
-                        VIPERR COMMUNITY 2026 · NOMINEE #04
-                    </div>
+                <div class="vote-subtitle">
+                    Кандидат на главный трек года.
+                </div>
 
-                    <button class="track-button" data-track="jealous">
-                        ГОЛОСОВАТЬ
-                    </button>
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'track_net_tebya')"
+                >
+                    ГОЛОСОВАТЬ
+                </button>
 
-                    <div class="votes">
-                        Голосов: <strong id="votes-jealous">0</strong>
-                    </div>
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-track_net_tebya">
+                        0
+                    </strong>
                 </div>
 
             </div>
 
-        </div>
+        </section>
 
-        <div class="usa-decor">
-            <span class="accessory one">✦</span>
-            <span class="accessory two">★</span>
-            <span class="accessory three">✧</span>
+
+        <!-- =========================
+             СОБЫТИЯ
+        ========================== -->
+
+        <section
+            id="events"
+            class="vote-section"
+        >
+
+            <div class="vote-card">
+
+                <div class="vote-number">
+                    СОБЫТИЕ №01
+                </div>
+
+                <div class="vote-title">
+                    СТРИМ С ЕГОРОМ КРИДОМ
+                </div>
+
+                <div class="vote-subtitle">
+                    Стрим с Егором Кридом,
+                    madk1d и Тёмным принцем.
+                </div>
+
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'event_stream')"
+                >
+                    ГОЛОСОВАТЬ
+                </button>
+
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-event_stream">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="vote-card">
+
+                <div class="vote-number">
+                    СОБЫТИЕ №02
+                </div>
+
+                <div class="vote-title">
+                    ВПИСКА С 9MICE
+                </div>
+
+                <div class="vote-subtitle">
+                    Одно из главных событий
+                    VIPERR COMMUNITY.
+                </div>
+
+                <button
+                    class="vote-button"
+                    onclick="vote(this, 'event_9mice')"
+                >
+                    ГОЛОСОВАТЬ
+                </button>
+
+                <div class="vote-count">
+                    Голосов:
+                    <strong id="count-event_9mice">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="usa-block">
+
+            <div class="decor-text">
+                ★ USA ★ 2026 ★ VIPERR ★
+            </div>
+
         </div>
 
     </main>
 
 </div>
 
-<!-- NAVIGATION -->
+
+<!-- =========================
+     НИЖНЯЯ НАВИГАЦИЯ
+========================== -->
 
 <nav class="bottom-nav">
 
-    <button class="nav-button active" data-page="home">
-        <span class="nav-icon">⌂</span>
-        <span class="nav-label">ГЛАВНАЯ</span>
+    <button
+        class="nav-button active"
+        onclick="openPage('home', this)"
+    >
+
+        <span class="nav-icon">
+            ⌂
+        </span>
+
+        <span class="nav-label">
+            ГЛАВНАЯ
+        </span>
+
     </button>
 
-    <button class="nav-button" data-page="memes">
-        <span class="nav-icon">✦</span>
-        <span class="nav-label">МЕМЫ</span>
-    </button>
 
-    <button class="nav-button" data-page="track">
-        <span class="nav-icon">♫</span>
-        <span class="nav-label">ТРЕКИ</span>
+    <button
+        class="nav-button"
+        onclick="openPage('voting', this)"
+    >
+
+        <span class="nav-icon">
+            ★
+        </span>
+
+        <span class="nav-label">
+            ГОЛОСОВАНИЯ
+        </span>
+
     </button>
 
 </nav>
 
-<div id="toast" class="toast">Голос принят</div>
+
+<!-- TOAST -->
+
+<div
+    id="toast"
+    class="toast"
+>
+    Голос принят
+</div>
+
 
 <script>
-    "use strict";
 
-    /* TELEGRAM */
+    /* =========================
+       TELEGRAM
+    ========================== */
 
-    const tg = window.Telegram?.WebApp || null;
+    const tg = window.Telegram?.WebApp;
 
     if (tg) {
+
         tg.ready();
         tg.expand();
 
         try {
+
             tg.setHeaderColor("#070707");
             tg.setBackgroundColor("#070707");
-        } catch (error) {
-            console.log("Telegram WebApp settings unavailable");
-        }
+
+        } catch (e) {}
+
     }
 
-    /* NAVIGATION */
 
-    const pages = document.querySelectorAll(".page");
-    const navButtons = document.querySelectorAll(".nav-button");
+    /* =========================
+       ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ
+    ========================== */
 
-    function openPage(pageId) {
-        pages.forEach(page => {
-            page.classList.toggle(
-                "active",
-                page.id === pageId
-            );
-        });
+    function openPage(pageId, button) {
 
-        navButtons.forEach(button => {
-            button.classList.toggle(
-                "active",
-                button.dataset.page === pageId
-            );
-        });
+        document
+            .querySelectorAll(".page")
+            .forEach(page => {
+
+                page.classList.remove("active");
+
+            });
+
+
+        document
+            .querySelectorAll(".nav-button")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        const page =
+            document.getElementById(pageId);
+
+        if (page) {
+            page.classList.add("active");
+        }
+
+
+        if (button) {
+            button.classList.add("active");
+        }
+
 
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
+
     }
 
-    navButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            openPage(button.dataset.page);
-        });
-    });
 
-    /* VOTING */
+    /* =========================
+       ПЕРЕКЛЮЧЕНИЕ КАТЕГОРИЙ
+    ========================== */
 
-    const tracks = [
-        "kai",
-        "9mice",
-        "madk1d",
-        "jealous"
+    function openVoteCategory(category, button) {
+
+        document
+            .querySelectorAll(".vote-section")
+            .forEach(section => {
+
+                section.classList.remove("active");
+
+            });
+
+
+        document
+            .querySelectorAll(".vote-tab")
+            .forEach(tab => {
+
+                tab.classList.remove("active");
+
+            });
+
+
+        const section =
+            document.getElementById(category);
+
+        if (section) {
+            section.classList.add("active");
+        }
+
+
+        if (button) {
+            button.classList.add("active");
+        }
+
+    }
+
+
+    /* =========================
+       ГОЛОСОВАНИЕ
+    ========================== */
+
+    const voteIds = [
+
+        "meme_9mice",
+
+        "track_nofear",
+        "track_limousine",
+        "track_net_tebya",
+
+        "event_stream",
+        "event_9mice"
+
     ];
 
-    function updateVoteButton(track) {
-        const button = document.querySelector(
-            `.track-button[data-track="${track}"]`
-        );
 
-        if (!button) return;
+    voteIds.forEach(id => {
 
-        const voted =
-            localStorage.getItem(
-                `viperr_voted_${track}`
-            ) === "true";
+        const saved =
+            Number(
+                localStorage.getItem(
+                    "viperr_votes_" + id
+                ) || 0
+            );
 
-        if (voted) {
-            button.textContent = "✓ ГОЛОС ПРИНЯТ";
-            button.classList.add("voted");
+
+        const counter =
+            document.getElementById(
+                "count-" + id
+            );
+
+
+        if (counter) {
+            counter.textContent = saved;
         }
-    }
 
-    function updateVoteCounter(track) {
-        const counter = document.getElementById(
-            `votes-${track}`
-        );
+    });
 
-        if (!counter) return;
 
-        const votes = Number(
+    function vote(button, id) {
+
+        const alreadyVoted =
             localStorage.getItem(
-                `viperr_vote_${track}`
-            ) || 0
-        );
-
-        counter.textContent = votes;
-    }
-
-    function vote(track) {
-        const voted =
-            localStorage.getItem(
-                `viperr_voted_${track}`
+                "viperr_already_" + id
             ) === "true";
 
-        if (voted) {
-            showToast("Вы уже голосовали за этот трек");
+
+        if (alreadyVoted) {
+
+            showToast(
+                "Вы уже голосовали"
+            );
+
             return;
         }
 
-        const currentVotes = Number(
-            localStorage.getItem(
-                `viperr_vote_${track}`
-            ) || 0
-        );
+
+        let votes =
+            Number(
+                localStorage.getItem(
+                    "viperr_votes_" + id
+                ) || 0
+            );
+
+
+        votes++;
+
 
         localStorage.setItem(
-            `viperr_vote_${track}`,
-            String(currentVotes + 1)
+            "viperr_votes_" + id,
+            votes
         );
 
+
         localStorage.setItem(
-            `viperr_voted_${track}`,
+            "viperr_already_" + id,
             "true"
         );
 
-        updateVoteCounter(track);
-        updateVoteButton(track);
 
-        showToast("Голос принят");
+        const counter =
+            document.getElementById(
+                "count-" + id
+            );
 
-        if (tg?.HapticFeedback) {
-            try {
-                tg.HapticFeedback.impactOccurred("medium");
-            } catch (error) {}
+
+        if (counter) {
+            counter.textContent = votes;
         }
+
+
+        button.textContent =
+            "✓ ГОЛОС ПРИНЯТ";
+
+
+        button.classList.add("voted");
+
+
+        showToast(
+            "Голос принят"
+        );
+
+
+        if (
+            tg &&
+            tg.HapticFeedback
+        ) {
+
+            tg.HapticFeedback
+                .impactOccurred("medium");
+
+        }
+
     }
 
-    document.querySelectorAll(".track-button").forEach(button => {
-        button.addEventListener("click", () => {
-            vote(button.dataset.track);
-        });
-    });
 
-    tracks.forEach(track => {
-        updateVoteCounter(track);
-        updateVoteButton(track);
-    });
-
-    /* TOAST */
-
-    let toastTimer;
+    /* =========================
+       УВЕДОМЛЕНИЕ
+    ========================== */
 
     function showToast(text) {
-        const toast = document.getElementById("toast");
 
-        if (!toast) return;
+        const toast =
+            document.getElementById("toast");
+
 
         toast.textContent = text;
+
+
         toast.classList.add("show");
 
-        clearTimeout(toastTimer);
 
-        toastTimer = setTimeout(() => {
+        setTimeout(() => {
+
             toast.classList.remove("show");
+
         }, 2200);
+
     }
+
 </script>
 
 </body>
